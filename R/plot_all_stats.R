@@ -12,7 +12,7 @@ library(mapdata)
 library(raster)
 library(mgcv)
 
-dirpath <- 'G:/hacer_hoy/anchovy/SensitivityTests12/1995simu12/'
+dirpath <- '/home/jtam/Documentos/kinesis/1998/'
 xlimmap <- c(-100, -70)    # X limits of plot
 ylimmap <- c(-30, -0)      # Y limits of plot
 
@@ -53,7 +53,7 @@ error_bar <- function(x, a = 0.05){
 readDataOutput <- function(dirpath){
   dir.create(paste0(dirpath, 'trajectories/'), showWarnings = F)
   trajFiles <- list.files(path = dirpath, pattern = 'output', full.names = T)
-
+  
   df <- NULL
   surviv <- NULL
   for(i in 1:length(trajFiles)){
@@ -104,10 +104,10 @@ readDataOutput <- function(dirpath){
   }
   
   #--------- Calculo retenidos en la costa ---------#
-  path_add <- 'G:/hacer_hoy/anchovy/input/interanual/'
+  path_add <- '/home/jtam/Documentos/kinesis/input/'
   lon <- as.matrix(read.table(paste0(path_add, 'lon_grid.csv'), header = F))
   lat <- as.matrix(read.table(paste0(path_add, 'lat_grid.csv'), header = F))
-  coast <- as.matrix(read.table(paste0(path_add, 'maskCoastIndex.csv'), header = F))
+  coast <- as.matrix(read.table(paste0(path_add, 'CoastLineIndex.csv'), header = F))
   
   xyz <- cbind(as.vector(lon), as.vector(lat), as.vector(coast))
   r <- rasterFromXYZ(xyz = xyz)
@@ -238,7 +238,7 @@ dev.off()
 for(i in 1:length(levels(factor(alive$day)))){
   
   df2 <- subset(alive, alive$day == i)
-
+  
   PNG2 <- paste0(dirpath,'trajectories/', '/AliveTrajectories',i,'.png')
   # #---------- PLOT WITH GGPLOT2 ----------#
   # graph <- ggplot(data = df2) +

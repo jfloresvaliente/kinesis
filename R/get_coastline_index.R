@@ -8,7 +8,7 @@
 #===============================================================================
 library(fields)
 
-dirpath  <- '/home/marissela/Documents/KINESIS/KINESIS_ORIGINAL_SOURCE/anchovy/input/'
+dirpath  <- '/home/jtam/Documentos/kinesis/input/'
 fileMask <- paste0(dirpath, 'mask_grid.csv')
 fileLon  <- paste0(dirpath, 'lon_grid.csv')
 fileLat  <- paste0(dirpath, 'lat_grid.csv')
@@ -17,7 +17,7 @@ lon  <- as.matrix(read.table(file = fileLon, header = F, sep = ''))
 lat  <- as.matrix(read.table(file = fileLat, header = F, sep = ''))
 mask <- as.matrix(read.table(file = fileMask, header = F, sep = ''))
 
-image.plot(lon, lat, mask)
+# image.plot(lon, lat, mask)
 
 #mask[mask==0] = NA
 a <- mask[-c(1:6), ] # quito 6 filas de la parte superior
@@ -26,12 +26,12 @@ c <- rbind(a,b) # suma a (con filas faltantes) y b (con las filas llenas de cero
 mask <- mask - c # resto para tener la mascara deseada
 # mask[mask!=1] = NA # transformo todos los calores no desados en NA
 
-image.plot(lon, lat, c)
-image.plot(lon, lat, mask)
+# image.plot(lon, lat, c)
+# image.plot(lon, lat, mask)
 
-mask[,c(1:120, 222:331)] = 0
+mask[,c(1:132, 206:331)] = 0
 image.plot(lon, lat, mask)
-abline(h = c(-3,-20))
+abline(h = c(-6,-18))
 
 # Para obtener una mascara y multiplicar luego
 maskCoastIndex <- paste0(dirpath, 'CoastLine.csv')
