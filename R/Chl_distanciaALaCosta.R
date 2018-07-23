@@ -1,7 +1,7 @@
 library(fields)
 library(sp)
-dirpath <- 'G:/ROMS_SIMULATIONS/ROMS6B_VINCENT_SIMULATION/year1995/zlev1/'
-gridpath <- 'G:/ROMS_SIMULATIONS/ROMS6B_VINCENT_SIMULATION/year1995/'
+dirpath <- 'G:/ROMS_SIMULATIONS/ROMS6B_VINCENT_SIMULATION/japonForcing/zlev1/'
+gridpath <- 'G:/ROMS_SIMULATIONS/ROMS6B_VINCENT_SIMULATION/japonForcing/zlev1/'
 
 lon <- as.matrix(read.table(paste0(gridpath, 'lon_grid.csv')))
 lon <- lon[,1]
@@ -10,7 +10,9 @@ lat <- lat[1,]
 mask <- as.matrix(read.table(paste0(gridpath, 'mask_grid.csv')))
 mask[mask == 0] <- NA
 
-files <- list.files(path = dirpath, pattern = '_c', full.names = T)
+year <- 1998
+vari <- 'c'
+files <- list.files(path = dirpath, pattern = paste0(vari, year), full.names = T)
 
 chl <- NULL
 for(i in files){
@@ -23,7 +25,7 @@ chl <- matrix(data = chl, nrow = dim(mask)[1], ncol = dim(mask)[2])
 
 latitudes <- c(-5,-10,-15,-20)
 
-png(filename = 'C:/Users/ASUS/Desktop/Chl1995MeanZlev1.png', height = 850, width = 850, res = 120)
+png(filename = paste0(dirpath, vari, year, '.png'), height = 850, width = 850, res = 120)
 par(mfrow = c(2,2))
 for(i in latitudes){
   nlat <- i
