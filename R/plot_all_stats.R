@@ -12,7 +12,7 @@ library(mapdata)
 library(raster)
 library(mgcv)
 
-dirpath <- '/home/jtam/Documentos/kinesis/1998/'
+dirpath <- '/home/marissela/Documents/KINESIS/ANCHOVY/NinaAgosto/'
 xlimmap <- c(-100, -70)    # X limits of plot
 ylimmap <- c(-30, -0)      # Y limits of plot
 
@@ -52,7 +52,7 @@ error_bar <- function(x, a = 0.05){
 
 readDataOutput <- function(dirpath){
   dir.create(paste0(dirpath, 'trajectories/'), showWarnings = F)
-  trajFiles <- list.files(path = dirpath, pattern = 'output', full.names = T)
+  trajFiles <- list.files(path = dirpath, pattern = 'output', full.names = T, recursive = T)
   
   df <- NULL
   surviv <- NULL
@@ -104,7 +104,7 @@ readDataOutput <- function(dirpath){
   }
   
   #--------- Calculo retenidos en la costa ---------#
-  path_add <- '/home/jtam/Documentos/kinesis/input/'
+  path_add <- '/home/marissela/Documents/KINESIS/ANCHOVY/input/'
   lon <- as.matrix(read.table(paste0(path_add, 'lon_grid.csv'), header = F))
   lat <- as.matrix(read.table(paste0(path_add, 'lat_grid.csv'), header = F))
   coast <- as.matrix(read.table(paste0(path_add, 'CoastLineIndex.csv'), header = F))
