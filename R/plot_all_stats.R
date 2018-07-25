@@ -63,7 +63,11 @@ readDataOutput <- function(dirpath){
     if (i == 1) ini_particles <- length(dat$V1)
     dat$day <- rep(i, times = dim(dat)[1])
     
-    PNG1 <- paste0(dirpath,'trajectories/', '/AllTrajectories',i,'.png')
+    if(i < 10) number <- paste0('00',i)
+    if(i >= 10 & i <=100) number <- paste0('0',i)
+    if(i > 100) number <- i
+    
+    PNG1 <- paste0(dirpath,'trajectories/', '/AllTrajectories',number ,'.png')
     # #---------- PLOT WITH GGPLOT2 ----------#
     # graph <- ggplot(data = dat) +
     #   geom_point(data = dat, aes(x = V1, y = V2), color = 'black',size = .2) +
@@ -239,7 +243,11 @@ for(i in 1:length(levels(factor(alive$day)))){
   
   df2 <- subset(alive, alive$day == i)
   
-  PNG2 <- paste0(dirpath,'trajectories/', '/AliveTrajectories',i,'.png')
+  if(i < 10) number <- paste0('00',i)
+  if(i >= 10 & i <=100) number <- paste0('0',i)
+  if(i > 100) number <- i
+  
+  PNG2 <- paste0(dirpath,'trajectories/', '/AliveTrajectories', number,'.png')
   # #---------- PLOT WITH GGPLOT2 ----------#
   # graph <- ggplot(data = df2) +
   #   geom_point(data = df2, aes(x = lon, y = lat), color = 'black',size = .2) +
