@@ -8,10 +8,11 @@
 #===============================================================================
 
 # Dirpath with Kinesis input files to rename
-dirpath  <- 'G:/ROMS_SIMULATIONS/ROMS6B_VINCENT_SIMULATION/year1995/zlev40/'
+dirpath  <- 'G:/ROMS_SIMULATIONS/ROMS6B_VINCENT_SIMULATION/japonForcing/zlev1/'
 year_in  <- 1995 # Initial year input
-year_on  <- 1995 # End year input
-variable <- c('c','t','u','v')
+year_on  <- 1999 # End year input
+# variable <- c('c','t','u','v')
+variable <- c('z','m')
 
 #===============================================================================
 # DO NOT CHANGE ANYTHING AFTER HERE

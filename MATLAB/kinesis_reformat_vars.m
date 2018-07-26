@@ -10,3 +10,5 @@ for i = 1: size(files,1)
     save([path files(i).name],'dat','-ascii');
     disp([path files(i).name])
 end
+%%%%%% %%%%%% %%%%%% %%%%%%   END OF PROGRAM  %%%%%% %%%%%% %%%%%% %%%%%%
+%%%%%% %%%%%% %%%%%% %%%%%%   END OF PROGRAM  %%%%%% %%%%%% %%%%%% %%%%%%
