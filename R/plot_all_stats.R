@@ -12,7 +12,7 @@ library(mapdata)
 library(raster)
 library(mgcv)
 
-dirpath <- '/home/marissela/Documents/KINESIS/ANCHOVY/NinaAgosto/'
+dirpath <- 'G:/hacer_hoy/SARDINE/SardineTemp4/NinoEnero/'
 xlimmap <- c(-100, -70)    # X limits of plot
 ylimmap <- c(-30, -0)      # Y limits of plot
 
@@ -108,7 +108,7 @@ readDataOutput <- function(dirpath){
   }
   
   #--------- Calculo retenidos en la costa ---------#
-  path_add <- '/home/marissela/Documents/KINESIS/ANCHOVY/input/'
+  path_add <- 'G:/hacer_hoy/ANCHOVY/input/'
   lon <- as.matrix(read.table(paste0(path_add, 'lon_grid.csv'), header = F))
   lat <- as.matrix(read.table(paste0(path_add, 'lat_grid.csv'), header = F))
   coast <- as.matrix(read.table(paste0(path_add, 'CoastLineIndex.csv'), header = F))
@@ -319,6 +319,7 @@ latmin  <- -0
 latmax  <- -20
 xlimmap <- c(-100, -70)    # X limits of plot
 ylimmap <- c(-30, -0)      # Y limits of plot
+zlimmap <- c(0,18)
 color.limits <- c(0,10)
 
 #----PLOT ALL TRAJECTORIES----#
@@ -329,7 +330,7 @@ PNG3 <- paste0(dirpath, 'allTrajectories.png')
 map <- ggplot(data = df)
 map <- map +
   geom_path(data = df, aes(group = drifter, x = lon, y = lat, colour = knob), size = .1) +
-  scale_colour_gradientn(colours = tim.colors(n = 64, alpha = 1), expression(knob)) +
+  scale_colour_gradientn(colours = tim.colors(n = 64, alpha = 1), expression(knob), limits = zlimmap) +
   labs(x = 'Longitude (W)', y = 'Latitude (S)') +
   borders(fill='grey',colour='grey') +
   coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +
@@ -353,7 +354,7 @@ PNG4 <- paste0(dirpath, 'reteinedTrajectories.png')
 map   <- ggplot(data = alive)
 map <- map +
   geom_path(data = alive, aes(group = drifter, x = lon, y = lat, colour = knob), size = .1) +
-  scale_colour_gradientn(colours = tim.colors(n = 64, alpha = 1), expression(knob)) +
+  scale_colour_gradientn(colours = tim.colors(n = 64, alpha = 1), expression(knob), limits = zlimmap) +
   labs(x = 'Longitude (W)', y = 'Latitude (S)') +
   borders(fill='grey',colour='grey') +
   coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +
@@ -378,7 +379,7 @@ PNG5 <- paste0(dirpath, 'coastalReteinedTrajectories.png')
 map   <- ggplot(data = coastalReteined)
 map <- map +
   geom_path(data = coastalReteined, aes(group = drifter, x = lon, y = lat, colour = knob), size = .1) +
-  scale_colour_gradientn(colours = tim.colors(n = 64, alpha = 1), expression(knob)) +
+  scale_colour_gradientn(colours = tim.colors(n = 64, alpha = 1), expression(knob), limits = zlimmap) +
   labs(x = 'Longitude (W)', y = 'Latitude (S)') +
   borders(fill='grey',colour='grey') +
   annotate('text', x = -75, y = -5, label = paste(length(coastalReteinedIndex), 'retenidas en la costa'))+
