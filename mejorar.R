@@ -12,11 +12,13 @@ library(mapdata)
 library(raster)
 library(mgcv)
 
-dirpath <- '/home/jtam/Documentos/KINESIS/ANCHOVY/NinaAgosto/'
+dirpath <- 'G:/hacer_hoy/ANCHOVY/NinaAgosto/'
 xlimmap <- c(-100, -70)    # X limits of plot
 ylimmap <- c(-30, -0)      # Y limits of plot
 nfiles <- 350
 ylim <- c(0,18)
+Wweight_lim <- c(0,25)
+temp_lim <- c(10,30)
 #===============================================================================#
 # DO NOT CHANGE ANYTHING FROM HERE, UNLESS YOU KNOW WHAT YOU ARE DOING
 #===============================================================================#
@@ -178,7 +180,7 @@ par(lwd = 2, mar = c(3.5,4,2,1))
 hist(x = FinalDayAlive$knob, breaks = histxlim, axes = F, xlab = '', main = '', ylab = '', ylim = histylim)
 mtext(side = 1, line = 2, font = 2, text = 'knob')
 mtext(side = 2, line = 3, font = 2, text = 'Frequency')
-mtext(side = 3, line = 0, font = 2, text = 'All Particles')
+mtext(side = 3, line = 0, font = 2, text = 'Alive Particles')
 axis(2, lwd = 2, lwd.ticks = 2, font.axis=4, las = 2)
 axis(1, lwd = 2, lwd.ticks = 2, font.axis=4, histlabels, histlabels)
 box(lwd = 2)
@@ -209,9 +211,24 @@ axis(side = 1, lwd = 2, lwd.ticks = 2, font.axis=4)
 axis(side = 2, lwd = 2, lwd.ticks = 2, font.axis=4, las = 2)
 box(lwd = 2)
 par(new = T, lwd = 2)
-plot(Wweight_max, type = 'l', col = 'red', axes = F, xlab = '', ylab = '', ylim = Wweight_lim)
+plot(maxGrowth$Wweight, type = 'l', col = 'red', axes = F, xlab = '', ylab = '', ylim = Wweight_lim)
 axis(4, lwd=2,line=0, col='red',  col.axis = 'red', las = 2)
 mtext(side = 4, line = 2, font = 2, text = 'Wweight', col = 'red')
+dev.off()
+
+#----------Plot Max Growth (all particles) with Temp ---------#
+png(file = paste0(dirpath, 'MaxGrowth_withTemp.png'), width = 650, height = 650)
+par(lwd = 2, mar = c(3.5,3.5,2,3.5))
+graf1 <- plot(maxGrowth$knob,type = 'l', xlab = '', ylab = '', lwd = 2, axes = F, ylim = ylim)
+mtext(side = 1, line = 2, font = 2, text = 'Days after spawning')
+mtext(side = 2, line = 2, font = 2, text = 'knob (cm)')
+axis(side = 1, lwd = 2, lwd.ticks = 2, font.axis=4)
+axis(side = 2, lwd = 2, lwd.ticks = 2, font.axis=4, las = 2)
+box(lwd = 2)
+par(new = T, lwd = 2)
+plot(maxGrowth$temp, type = 'l', col = 'red', axes = F, xlab = '', ylab = '', ylim = temp_lim)
+axis(4, lwd=2,line=0, col='red',  col.axis = 'red', las = 2)
+mtext(side = 4, line = 2, font = 2, text = 'Temperature', col = 'red')
 dev.off()
 
 
