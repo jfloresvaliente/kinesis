@@ -34,7 +34,7 @@ k <- SP@polygons[[1]]@Polygons[[1]]@coords
 
 #-------- Conteo de Particulas dentro de Zona de REsidencia -----------#
 dirpath <- 'G:/hacer_hoy/anchovy/SensitivityTests12/1995simu1/'
-files <- list.files(path = dirpath, pattern = 'output', full.names = T)
+files <- list.files(path = dirpath, pattern = 'output', full.names = T, recursive = T)
 
 PercentParti <- NULL
 pathTraj <- NULL
