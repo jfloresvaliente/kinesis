@@ -16,7 +16,7 @@ library(ggmap)
 path_add <- 'G:/hacer_hoy/anchovy/input/interanual/'
 lon <- as.matrix(read.table(paste0(path_add, 'lon_grid.csv'), header = F))
 lat <- as.matrix(read.table(paste0(path_add, 'lat_grid.csv'), header = F))
-coast <- as.matrix(read.table(paste0(path_add, 'maskCoastIndex.csv'), header = F))
+coast <- as.matrix(read.table(paste0(path_add, 'CoastLineIndex.csv'), header = F))
 
 
 xyz <- cbind(as.vector(lon), as.vector(lat), as.vector(coast))
