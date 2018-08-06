@@ -1,3 +1,11 @@
+#=============================================================================#
+# Name   : 
+# Author : Jorge Flores
+# Date   : 
+# Version:
+# Aim    : 
+# URL    : 
+#=============================================================================#
 library(maps)
 fileTxt <- '/home/marissela/Documents/KINESIS/ORIGINAL_SOURCE/anchovy/input/c20010103.txt'
 dat <- read.table(file = fileTxt, header = F, sep = '')
@@ -23,3 +31,6 @@ min(alon)
 alat <- lat[a[,]]
 max(alat)
 min(alat)
+#=============================================================================#
+# END OF PROGRAM
+#=============================================================================#

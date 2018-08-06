@@ -1,11 +1,11 @@
-#===============================================================================
+#=============================================================================#
 # Name   : get_coastline_index
 # Author : Jorge Flores
 # Date   : 
 # Version:
 # Aim    : Obtiene un indice de costa segun dimensiones deseadas
 # URL    : 
-#===============================================================================
+#=============================================================================#
 library(fields)
 
 dirpath  <- '/home/jtam/Documentos/kinesis/input/'
@@ -41,6 +41,6 @@ write.table(x = mask, file = maskCoastIndex, col.names = F, row.names = F)
 index = which(mask == 1, arr.ind = T)
 fileIndex <- paste0(dirpath, 'CoastLineIndex.csv')
 write.table(x = index, file = fileIndex, col.names = F, row.names = F)
-#===============================================================================
+#=============================================================================#
 # END OF PROGRAM
-#===============================================================================
+#=============================================================================#

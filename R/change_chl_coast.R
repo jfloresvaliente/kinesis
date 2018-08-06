@@ -1,11 +1,11 @@
-#===============================================================================
+#=============================================================================#
 # Name   : change_chl_coast
 # Author : Jorge Flores
 # Date   : 
 # Version:
 # Aim    : Aumenta la clorofila en la costa (usando un index-position de costa)
 # URL    : 
-#===============================================================================
+#=============================================================================#
 dirpath   <- '/home/marissela/Documents/KINESIS/KINESIS_ORIGINAL_SOURCE/anchovy/input/interanual/zlev20/'
 ndiv      <- 30 # Numero en que se aumentara la clorofila
 vari      <- 'c'
@@ -32,6 +32,6 @@ for(i in 1:length(cfiles)){
   write.table(new_dat, file = paste0(inputNew, cfiles[i]), row.names = F, col.names = F,eol = '\r')
   print(cfiles[i])
 }
-#===============================================================================
+#=============================================================================#
 # END OF PROGRAM
-#===============================================================================
+#=============================================================================#

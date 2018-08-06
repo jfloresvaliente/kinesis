@@ -1,3 +1,11 @@
+#=============================================================================#
+# Name   : 
+# Author : Jorge Flores
+# Date   : 
+# Version:
+# Aim    : 
+# URL    : 
+#=============================================================================#
 init <- Sys.time()
 source('F:/GitHub/kinesis/R/kinesis_regrid_input.R')
 dirpath <- 'G:/ROMS_SIMULATIONS/ROMS6B_VINCENT_SIMULATION/japonForcing/zlev1/'
@@ -8,3 +16,6 @@ for(i in vars){
 }
 endit <- Sys.time()
 print(endit - init)
+#=============================================================================#
+# END OF PROGRAM
+#=============================================================================#

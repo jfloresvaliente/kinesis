@@ -1,11 +1,11 @@
-#===============================================================================
+#=============================================================================#
 # Name   : kinesis_model_input_plots
 # Author : Jorge Flores
 # Date   : 
 # Version:
 # Aim    : Make boxplots, error_bar plots & histograms for KINESIS_MODEL' input
 # URL    : 
-#===============================================================================
+#=============================================================================#
 
 dirpath = '/run/media/marissela/JORGE_OLD/ROMS_SIMULATIONS/ROMS6B_VINCENT_SIMULATION/viejo/' # input directory / where images will be saved
 
@@ -140,6 +140,6 @@ for(i in year){
 #     # dev.off()
 #   }
 # }
-
-### END OF PROGRAM ###
-
+#=============================================================================#
+# END OF PROGRAM
+#=============================================================================#

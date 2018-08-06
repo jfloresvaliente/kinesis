@@ -1,3 +1,11 @@
+#=============================================================================#
+# Name   : 
+# Author : Jorge Flores
+# Date   : 
+# Version:
+# Aim    : 
+# URL    : 
+#=============================================================================#
 library(fields)
 source('/run/media/marissela/JORGE_F/kinesis_peru/scripts/kinesis_get_av_SL.R')
 source('/run/media/marissela/JORGE_F/kinesis_peru/scripts/kinesis_get_maximal_growth.R')
@@ -33,5 +41,6 @@ for(i in 1:length(files)){
   print(files[i])
   dev.off()
 }
-
-
+#=============================================================================#
+# END OF PROGRAM
+#=============================================================================#

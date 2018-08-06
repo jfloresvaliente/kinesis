@@ -1,12 +1,11 @@
-#===============================================================================
+#=============================================================================#
 # Name   : kinesis_get_new_mask
 # Author : Jorge Flores - Jorge Tam
 # Date   : 15/06/2017
 # Version: V1
 # Aim    : Transform irregular mask to regular mask for Kinesis model inputs
 # URL    : 
-#===============================================================================
-
+#=============================================================================#
 library(ncdf4)
 library(fields)
 library(akima)
@@ -54,7 +53,6 @@ image.plot(newlon, newlat, newz0, main = 'new mask', xlab = '', ylab = '')
 write.table(newz0,  file = paste0(dirpath, 'mask_grid.csv'), row.names = F, col.names = F)
 write.table(newlon, file = paste0(dirpath, 'lon_grid.csv'), row.names = F, col.names = F)
 write.table(newlat, file = paste0(dirpath, 'lat_grid.csv'), row.names = F, col.names = F)
-
-#===============================================================================
+#=============================================================================#
 # END OF PROGRAM
-#===============================================================================
+#=============================================================================#

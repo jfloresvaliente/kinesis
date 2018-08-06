@@ -1,3 +1,11 @@
+#=============================================================================#
+# Name   : 
+# Author : Jorge Flores
+# Date   : 
+# Version:
+# Aim    :
+# URL    : 
+#=============================================================================#
 # PLOT INITIAL POSITIONS FOR PARTICLES IN KINESIS MODEL
 
 ## STEP 1: PLOT A MAP
@@ -93,5 +101,6 @@ e = cbind(round((e[,1]+360), digits = 6), round(e[,2],digits = 6), e[,3])
 
 write.table(d, paste0(dirpath,'anchovy_pos.csv'), row.names = F, col.names = F, sep = ' ')
 write.table(e, paste0(dirpath,'sardine_pos.csv'), row.names = F, col.names = F, sep = ' ')
-
-
+#=============================================================================#
+# END OF PROGRAM
+#=============================================================================#

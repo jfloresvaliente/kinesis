@@ -1,3 +1,11 @@
+#=============================================================================#
+# Name   : 
+# Author : Jorge Flores
+# Date   : 
+# Version:
+# Aim    : 
+# URL    : 
+#=============================================================================#
 library(fields)
 library(sp)
 dirpath <- 'G:/ROMS_SIMULATIONS/ROMS6B_VINCENT_SIMULATION/japonForcing/zlev1/'
@@ -46,3 +54,6 @@ for(i in latitudes){
        xlim = c(0,400), ylim = c(0,4), main = paste('LAT', nlat))
 }
 # dev.off()
+#=============================================================================#
+# END OF PROGRAM
+#=============================================================================#

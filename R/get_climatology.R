@@ -1,3 +1,11 @@
+#=============================================================================#
+# Name   : DividirCorrientes
+# Author : Jorge Flores
+# Date   : 
+# Version:
+# Aim    : 
+# URL    : 
+#=============================================================================#
 var_serie <- read.table('C:/Users/ASUS/Desktop/t_serie.csv', header = F)
 
 year_in <- 1958
@@ -113,3 +121,6 @@ abline(h = 0)
 # #Box plot across months will give us a sense on seasonal effect
 # boxplot(AirPassengers~cycle(AirPassengers))
 # 
+#=============================================================================#
+# END OF PROGRAM
+#=============================================================================#

@@ -1,4 +1,4 @@
-#===============================================================================
+#=============================================================================#
 # Name   : kinesis_map_climatology
 # Author : Jorge Flores
 # Date   : 
@@ -6,7 +6,7 @@
 # Aim 1  : make climatology maps for Kinesis model input
 # Aim 2  : save image plot in a specific directory
 # URL    : 
-#===============================================================================
+#=============================================================================#
 kinesis_map_climatology <- function(dirpath,
                                     var  = 't',
                                     xlim = c(-85,-70),
@@ -78,9 +78,9 @@ kinesis_map_climatology <- function(dirpath,
   dev.off()
   print(paste('Climatological image save in ...', dirpath))
 }
-#===============================================================================
-# END OF PROGRAM
-#===============================================================================
+#=============================================================================#
+# END OF FUNCTION
+#=============================================================================#
 
 dirpath <- 'G:/hacer_hoy/KINESIS_ORIGINAL_SOURCE/anchovy/input/interanual/zlev10/'
 vars <- c('t','c','u','v')
@@ -92,3 +92,6 @@ for(i in 1:length(vars)){
     kinesis_map_climatology(dirpath, var = vars[i], zlim = zlim[i,], year_in = j, year_on = j) 
   }
 }
+#=============================================================================#
+# END OF PROGRAM
+#=============================================================================#

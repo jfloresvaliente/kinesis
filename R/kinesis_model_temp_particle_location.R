@@ -1,11 +1,11 @@
-#===============================================================================
+#=============================================================================#
 # Name   : kinesis_model_temp_particle_location
 # Author : Jorge Flores
 # Date   : 
 # Version:
 # Aim    : Plots temperature mean at particle position for Kinesis model
 # URL    : 
-#===============================================================================
+#=============================================================================#
 dirpath = 'G:/kinesis_avances/long_run/run1/' # directory of outputs / where images will be saved
 
 years = 1995:1997
@@ -53,7 +53,9 @@ text(x=1:length(dates), y = par()$usr[3] - 0.05*(par()$usr[4]-par()$usr[3]),
      labels=dates, srt=45, adj=1, xpd=TRUE, cex=1)
 arrows(1:length(mat[,1]) , y0= rev(mat[,2]), 1:length(mat[,1]), y1=rev(mat[,3]),
        code=3, angle=90, length=0.1)
-mtext('Mean temperature (T°) in each particles position', side=3, line= -1)
+mtext('Mean temperature (T?) in each particles position', side=3, line= -1)
 
 dev.off()
-
+#=============================================================================#
+# END OF PROGRAM
+#=============================================================================#

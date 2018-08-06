@@ -1,4 +1,4 @@
-#===============================================================================
+#=============================================================================#
 # Name   : kinesis_map_intensity_currents
 # Author : Jorge Flores
 # Date   : 
@@ -6,7 +6,7 @@
 # Aim 1  : make intensity currents maps for Kinesis model input
 # Aim 2  : save image plot in a specific directory
 # URL    : 
-#===============================================================================
+#=============================================================================#
 kinesis_map_intensity_currents <- function(dirpath,
                                            xlim = c(-85,-70),
                                            ylim = c(-20,2),
@@ -88,10 +88,9 @@ kinesis_map_intensity_currents <- function(dirpath,
   dev.off()
   print(paste('Climatological image save in ...', dirpath))
 }
-
-#===============================================================================
-# END OF PROGRAM
-#===============================================================================
+#=============================================================================#
+# END OF FUNCTION
+#=============================================================================#
 
 dirpath <- 'G:/hacer_hoy/KINESIS_ORIGINAL_SOURCE/anchovy/input/interanual/zlev20/'
 years <- 1995:1999
@@ -99,3 +98,6 @@ for(j in years){
   zlim <- c(0,0.35)
   kinesis_map_intensity_currents(dirpath, zlim = zlim, year_in = j, year_on = j) 
 }
+#=============================================================================#
+# END OF PROGRAM
+#=============================================================================#
