@@ -1,6 +1,6 @@
-#===============================================================================
+#=============================================================================#
 # Rutina para lectura de datos y ploteo de mapas
-#===============================================================================
+#=============================================================================#
 library(akima)
 library(fields)
 library(mapdata)
@@ -19,8 +19,8 @@ xlimmap <- c(-100, -70)    # X limite de longitud
 ylimmap <- c(-20, -0)      # Y limite de latitud
 zlimmap <- c(0,2000)       # Representa la densidad de huevos/larvas
 
-ini_year <- 1962
-end_year <- 1965
+ini_year <- 1960
+end_year <- 1970
 
 #---------------No cambiar nada a partir de aqui--------------------#
 mask <- as.matrix(read.csv(paste0(dirpath, 'mask_grid.csv'), sep = '', header = F))
@@ -52,29 +52,29 @@ for(i in 1:12){
   new_dat <- interp(x,y,z, xo = x0, yo = y0, duplicate = 'mean')
   newz <- new_dat[[3]]
   
-  x11(); par(mfrow = c(1,2))
-  image.plot(x0, y0, newz,
-             xlim = xlimmap, ylim = ylimmap, zlim = zlimmap,
-             axes = F)#, xlab = 'Lon', ylab = 'Lat')
-  map('worldHires', add=T, fill=T, col='gray') #, ylim = c(-20,0), xlim = c(-100,70))
-  box(lwd = 2)
-  if(i == 1 | i == 5 | i == 9) axis(2, las = 2, lwd = 2, font = 2)
-  if(i == 9 | i == 10 | i== 11 | i == 12) axis(1, lwd = 2, font = 2)
-  legend('bottomleft', legend = paste('Month',i), adj = .1, bty = 'n')
+  # x11(); par(mfrow = c(1,2))
+  # image.plot(x0, y0, newz,
+  #            xlim = xlimmap, ylim = ylimmap, zlim = zlimmap,
+  #            axes = F)#, xlab = 'Lon', ylab = 'Lat')
+  # map('worldHires', add=T, fill=T, col='gray') #, ylim = c(-20,0), xlim = c(-100,70))
+  # box(lwd = 2)
+  # if(i == 1 | i == 5 | i == 9) axis(2, las = 2, lwd = 2, font = 2)
+  # if(i == 9 | i == 10 | i== 11 | i == 12) axis(1, lwd = 2, font = 2)
+  # legend('bottomleft', legend = paste('Month',i), adj = .1, bty = 'n')
   
   # Buscar los valores mas altos
-  newz <- newz * mask
-  newz[newz < mean(newz, na.rm = T)] = NA
-  posi <- which(newz >= mean(newz, na.rm = T), arr.ind = T)
-  lons <- x0[posi[,1]]
-  lats <- y0[posi[,2]]
+  # newz <- newz * mask
+  # newz[newz < mean(newz, na.rm = T)] = NA
+  # posi <- which(newz >= mean(newz, na.rm = T), arr.ind = T)
+  # lons <- x0[posi[,1]]
+  # lats <- y0[posi[,2]]
   
-  map('worldHires', add=F, fill=T, col='gray', ylim = ylimmap, xlim = xlimmap)
-  box(lwd = 2)
-  axis(side = 1, at = seq(xlimmap[1], xlimmap[2], 5), labels = seq(xlimmap[1],xlimmap[2], 5),
-       lwd = 2, lwd.ticks = 2, font.axis=4)
-  axis(side = 2, at = seq(ylimmap[1]+2, ylimmap[2]-2, 5), labels = seq(ylimmap[1]+2, ylimmap[2]-2, 5),
-       lwd = 2, lwd.ticks = 2, font.axis=4, las = 2)
-  points(lons, lats, pch = 19, cex = .1)
+  # map('worldHires', add=F, fill=T, col='gray', ylim = ylimmap, xlim = xlimmap)
+  # box(lwd = 2)
+  # axis(side = 1, at = seq(xlimmap[1], xlimmap[2], 5), labels = seq(xlimmap[1],xlimmap[2], 5),
+  #      lwd = 2, lwd.ticks = 2, font.axis=4)
+  # axis(side = 2, at = seq(ylimmap[1]+2, ylimmap[2]-2, 5), labels = seq(ylimmap[1]+2, ylimmap[2]-2, 5),
+  #      lwd = 2, lwd.ticks = 2, font.axis=4, las = 2)
+  # points(lons, lats, pch = 19, cex = .1)
 }
 
