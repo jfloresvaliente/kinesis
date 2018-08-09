@@ -12,7 +12,8 @@ library(mapdata)
 library(raster)
 library(mgcv)
 
-dirpath <- 'G:/hacer_hoy/SARDINE/SardineTemp4/NinoEnero/'
+dirpath <- 'C:/Users/ASUS/Desktop/SN120/'
+input_path <- 'C:/Users/ASUS/Desktop/input/'
 xlimmap <- c(-100, -70)    # X limits of plot
 ylimmap <- c(-30, -0)      # Y limits of plot
 
@@ -52,16 +53,17 @@ error_bar <- function(x, a = 0.05){
 
 readDataOutput <- function(dirpath){
   dir.create(paste0(dirpath, 'trajectories/'), showWarnings = F)
-  trajFiles <- list.files(path = dirpath, pattern = 'output', full.names = T, recursive = T)
+  trajFiles <- list.files(path = dirpath, pattern = paste0('output','.*\\.txt'), full.names = T, recursive = T)
   
   df <- NULL
   surviv <- NULL
-  for(i in 1:length(trajFiles)){
+  for(i in 2:length(trajFiles)){
     
     dat <- read.table(file = trajFiles[i], header = F, sep = '')
     dat$V1 <- dat$V1-360
-    if (i == 1) ini_particles <- length(dat$V1)
+    if (i == 2) ini_particles <- length(dat$V1)
     dat$day <- rep(i, times = dim(dat)[1])
+    colnames(dat) <- c('lon','lat','exSST','exPY','exSZ','exMZ','knob','Wweight','PA','TGL','drifter','day')
     
     if(i < 10) number <- paste0('00',i)
     if(i >= 10 & i <=100) number <- paste0('0',i)
@@ -94,35 +96,33 @@ readDataOutput <- function(dirpath){
     box(lwd = 2)
     axis(side = 1, at = seq(xlimmap[1], xlimmap[2], 5), labels = seq(xlimmap[1],xlimmap[2], 5),
          lwd = 2, lwd.ticks = 2, font.axis=4)
-    axis(side = 2, at = seq(ylimmap[1]+2, ylimmap[2]-2, 5), labels = seq(ylimmap[1]+2, ylimmap[2]-2, 5),
+    axis(side = 2, at = seq(ylimmap[1], ylimmap[2], 5), labels = seq(ylimmap[1], ylimmap[2], 5),
          lwd = 2, lwd.ticks = 2, font.axis=4, las = 2)
     points(x = dat[,1], y = dat[,2], pch = 19, cex = .1)
     mtext(text = paste('Day', i), side = 3, adj = 0.05, line = -1, font = 2)
     grid()
     dev.off()
     
-    survivor <- sum(dat$V4 >= error_bar(x = dat$V4)[1]) * 100 / ini_particles
+    survivor <- sum(dat$knob >= error_bar(x = dat$knob)[1]) * 100 / ini_particles
     surviv <- c(surviv, survivor)
     df <- rbind(df, dat)
     print(trajFiles[i])
   }
-  
+  # colnames(df) <- c('lon','lat','exSST','exPY','exSZ','exMZ','knob','Wweight','PA','TGL','drifter','day')
+  # colnames(dat)
   #--------- Calculo retenidos en la costa ---------#
-  path_add <- 'G:/hacer_hoy/ANCHOVY/input/'
-  lon <- as.matrix(read.table(paste0(path_add, 'lon_grid.csv'), header = F))
-  lat <- as.matrix(read.table(paste0(path_add, 'lat_grid.csv'), header = F))
-  coast <- as.matrix(read.table(paste0(path_add, 'CoastLineIndex.csv'), header = F))
+  lon <- as.matrix(read.table(paste0(input_path, 'lon_grid.csv'), header = F))
+  lat <- as.matrix(read.table(paste0(input_path, 'lat_grid.csv'), header = F))
+  coast <- as.matrix(read.table(paste0(input_path, 'CoastLineIndex.csv'), header = F))
   
   xyz <- cbind(as.vector(lon), as.vector(lat), as.vector(coast))
   r <- rasterFromXYZ(xyz = xyz)
   SP <- rasterToPolygons(clump(r==1), dissolve=TRUE)
   k <- SP@polygons[[1]]@Polygons[[1]]@coords
   
-  dat[,8] <- 1:dim(dat)[1]
   lonlat <- as.matrix(dat[,1:2])
-  colnames(dat) <- c('lon','lat','temp','knob','Wweight','drifter','day','coastalIndex')
   coastalReteinedIndex <- which(in.out(bnd = k, x = lonlat) == T)
-  coastalReteinedIndex <- subset(dat, dat[,8] %in% coastalReteinedIndex)
+  coastalReteinedIndex <- subset(dat, dat$drifter %in% coastalReteinedIndex)
   coastalReteinedIndex <- coastalReteinedIndex$drifter
   
   assign('coastalReteinedIndex',coastalReteinedIndex,.GlobalEnv)
@@ -132,7 +132,8 @@ readDataOutput <- function(dirpath){
   plot(surviv, type = 'l', xlab = 'Days of simulation', ylab = '%(L > Lc)', ylim = c(0,100))
   dev.off()
   
-  colnames(df) <- c('lon','lat','temp','knob','Wweight','drifter','day')
+  # colnames(dat) <- c('lon','lat','exSST','exPY','exSZ','exMZ','knob','Wweight','PA','TGL','drifter','day','coastalIndex')
+  # colnames(df) <- c('lon','lat','temp','knob','Wweight','drifter','day')
   return(df)
 }
 df <- readDataOutput(dirpath = dirpath)
@@ -238,49 +239,49 @@ axis(4, lwd=2,line=0, col='red',  col.axis = 'red', las = 2)
 mtext(side = 4, line = 2, font = 2, text = 'Wweight', col = 'red')
 dev.off()
 
-#----- PLOT MAP DE ALIVE PARTICLES -----#
-for(i in 1:length(levels(factor(alive$day)))){
-  
-  df2 <- subset(alive, alive$day == i)
-  
-  if(i < 10) number <- paste0('00',i)
-  if(i >= 10 & i <=100) number <- paste0('0',i)
-  if(i > 100) number <- i
-  
-  PNG2 <- paste0(dirpath,'trajectories/', '/AliveTrajectories', number,'.png')
-  # #---------- PLOT WITH GGPLOT2 ----------#
-  # graph <- ggplot(data = df2) +
-  #   geom_point(data = df2, aes(x = lon, y = lat), color = 'black',size = .2) +
-  #   borders(fill='grey',colour='grey') +
-  #   labs(x = 'Longitude (W)', y = 'Latitude (S)') +
-  #   coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +
-  #   geom_text(x = -98, y = -29, label = paste('Day', i), size=10, hjust=0, vjust=0) +
-  #   theme(axis.text.x  = element_text(face='bold', color='black',
-  #                                     size=15, angle=0),
-  #         axis.text.y  = element_text(face='bold', color='black',
-  #                                     size=15, angle=0),
-  #         axis.title.x = element_text(face='bold', color='black',
-  #                                     size=15, angle=0),
-  #         axis.title.y = element_text(face='bold', color='black',
-  #                                     size=15, angle=90),
-  #         legend.text  = element_text(size=15),
-  #         legend.title = element_text(size=15))
-  # if(!is.null(PNG2)) ggsave(filename = PNG2, width = 9, height = 9) else map
-  
-  #---------- PLOT WITH R BASE ----------#
-  png(file = PNG2, height = 650, width = 650)
-  par(mar = c(1,2,1,2), oma = c(2,1,.5,.5))
-  map('worldHires', add=F, fill=T, col='gray', ylim = ylimmap, xlim = xlimmap)
-  box(lwd = 2)
-  axis(side = 1, at = seq(xlimmap[1], xlimmap[2], 5), labels = seq(xlimmap[1], xlimmap[2], 5), lwd = 2, lwd.ticks = 2, font.axis=4)
-  axis(side = 2, at = seq(ylimmap[1]+2, ylimmap[2]-2, 5), labels = seq(ylimmap[1]+2, ylimmap[2]-2, 5),
-       lwd = 2, lwd.ticks = 2, font.axis=4, las = 2)
-  points(x = df2[,1], y = df2[,2], pch = 19, cex = .1)
-  mtext(text = paste('Day', i), side = 3, adj = 0.05, line = -1, font = 2)
-  grid()
-  dev.off()
-  print(PNG2)
-}
+# #----- PLOT MAP DE ALIVE PARTICLES -----#
+# for(i in 2:length(levels(factor(alive$day)))){
+#   
+#   df2 <- subset(alive, alive$day == i)
+#   
+#   if(i < 10) number <- paste0('00',i)
+#   if(i >= 10 & i <=100) number <- paste0('0',i)
+#   if(i > 100) number <- i
+#   
+#   PNG2 <- paste0(dirpath,'trajectories/', '/AliveTrajectories', number,'.png')
+#   # #---------- PLOT WITH GGPLOT2 ----------#
+#   # graph <- ggplot(data = df2) +
+#   #   geom_point(data = df2, aes(x = lon, y = lat), color = 'black',size = .2) +
+#   #   borders(fill='grey',colour='grey') +
+#   #   labs(x = 'Longitude (W)', y = 'Latitude (S)') +
+#   #   coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +
+#   #   geom_text(x = -98, y = -29, label = paste('Day', i), size=10, hjust=0, vjust=0) +
+#   #   theme(axis.text.x  = element_text(face='bold', color='black',
+#   #                                     size=15, angle=0),
+#   #         axis.text.y  = element_text(face='bold', color='black',
+#   #                                     size=15, angle=0),
+#   #         axis.title.x = element_text(face='bold', color='black',
+#   #                                     size=15, angle=0),
+#   #         axis.title.y = element_text(face='bold', color='black',
+#   #                                     size=15, angle=90),
+#   #         legend.text  = element_text(size=15),
+#   #         legend.title = element_text(size=15))
+#   # if(!is.null(PNG2)) ggsave(filename = PNG2, width = 9, height = 9) else map
+#   
+#   #---------- PLOT WITH R BASE ----------#
+#   png(file = PNG2, height = 650, width = 650)
+#   par(mar = c(1,2,1,2), oma = c(2,1,.5,.5))
+#   map('worldHires', add=F, fill=T, col='gray', ylim = ylimmap, xlim = xlimmap)
+#   box(lwd = 2)
+#   axis(side = 1, at = seq(xlimmap[1], xlimmap[2], 5), labels = seq(xlimmap[1], xlimmap[2], 5), lwd = 2, lwd.ticks = 2, font.axis=4)
+#   axis(side = 2, at = seq(ylimmap[1], ylimmap[2], 5), labels = seq(ylimmap[1], ylimmap[2], 5),
+#        lwd = 2, lwd.ticks = 2, font.axis=4, las = 2)
+#   points(x = df2[,1], y = df2[,2], pch = 19, cex = .1)
+#   mtext(text = paste('Day', i), side = 3, adj = 0.05, line = -1, font = 2)
+#   grid()
+#   dev.off()
+#   print(PNG2)
+# }
 
 #--------- Plot histogram for final length -----------#
 histxlim <- seq(0,25,.5)
@@ -397,6 +398,7 @@ map <- map +
 if(!is.null(PNG5)) ggsave(filename = PNG5, width = 9, height = 9) else map
 print(PNG5); flush.console()
 #---- FIN PLOT ONLY COASTAL RETEINED TRAJECTORIES----#
+rm(list = ls())
 #=============================================================================#
 # END OF PROGRAM
 #=============================================================================#
