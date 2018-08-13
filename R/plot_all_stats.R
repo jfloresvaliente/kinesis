@@ -12,10 +12,11 @@ library(mapdata)
 library(raster)
 library(mgcv)
 
-dirpath <- 'C:/Users/ASUS/Desktop/SN120/'
+dirpath <- 'F:/COLLABORATORS/KINESIS/out_from_source_2018-v4/'
 input_path <- 'C:/Users/ASUS/Desktop/input/'
 xlimmap <- c(-100, -70)    # X limits of plot
 ylimmap <- c(-30, -0)      # Y limits of plot
+nfiles  <- 304
 
 error_bar <- function(x, a = 0.05){
   # x = vector o matrix with data to evaluate, if x is a matrix, each column will be evaluate
@@ -54,14 +55,16 @@ error_bar <- function(x, a = 0.05){
 readDataOutput <- function(dirpath){
   dir.create(paste0(dirpath, 'trajectories/'), showWarnings = F)
   trajFiles <- list.files(path = dirpath, pattern = paste0('output','.*\\.txt'), full.names = T, recursive = T)
+  removefiles <- list.files(path = dirpath, pattern = paste0('output','.*\\.dat'), full.names = T, recursive = T)
+  file.remove(removefiles)
   
   df <- NULL
-  surviv <- NULL
-  for(i in 2:length(trajFiles)){
+  # surviv <- NULL
+  for(i in 5:nfiles){
     
     dat <- read.table(file = trajFiles[i], header = F, sep = '')
     dat$V1 <- dat$V1-360
-    if (i == 2) ini_particles <- length(dat$V1)
+    # if (i == 2) ini_particles <- length(dat$V1)
     dat$day <- rep(i, times = dim(dat)[1])
     colnames(dat) <- c('lon','lat','exSST','exPY','exSZ','exMZ','knob','Wweight','PA','TGL','drifter','day')
     
@@ -103,8 +106,8 @@ readDataOutput <- function(dirpath){
     grid()
     dev.off()
     
-    survivor <- sum(dat$knob >= error_bar(x = dat$knob)[1]) * 100 / ini_particles
-    surviv <- c(surviv, survivor)
+    # survivor <- sum(dat$knob >= error_bar(x = dat$knob)[1]) * 100 / ini_particles
+    # surviv <- c(surviv, survivor)
     df <- rbind(df, dat)
     print(trajFiles[i])
   }
@@ -128,9 +131,9 @@ readDataOutput <- function(dirpath){
   assign('coastalReteinedIndex',coastalReteinedIndex,.GlobalEnv)
   #--------- Fin de calculo retenidos en la costa ---------#
   
-  png(filename = paste0(dirpath, 'L-Lc.png'), height = 850, width = 850)
-  plot(surviv, type = 'l', xlab = 'Days of simulation', ylab = '%(L > Lc)', ylim = c(0,100))
-  dev.off()
+  # png(filename = paste0(dirpath, 'L-Lc.png'), height = 850, width = 850)
+  # plot(surviv, type = 'l', xlab = 'Days of simulation', ylab = '%(L > Lc)', ylim = c(0,100))
+  # dev.off()
   
   # colnames(dat) <- c('lon','lat','exSST','exPY','exSZ','exMZ','knob','Wweight','PA','TGL','drifter','day','coastalIndex')
   # colnames(df) <- c('lon','lat','temp','knob','Wweight','drifter','day')
