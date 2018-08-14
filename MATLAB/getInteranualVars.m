@@ -12,13 +12,13 @@ clc
 dir = 'G:/ROMS_SIMULATIONS/ROMS6B_VINCENT_SIMULATION/';
 
 %% Create a new directory to store input for Kinesis model
-new_dir = 'japonForcing'; % Name of new directory to store input for Kinesis model
+new_dir = '1993'; % Name of new directory to store input for Kinesis model
 mkdir([dir , new_dir]);
 dir2 = [dir, new_dir, '/'];
 
 %% It's only necessary superficial values
 N = 32; % Nivel rho que representa la superficie
-ZI = -1; % Niveles Z deseado en para obtner las variables
+ZI = -10; % Niveles Z deseado en para obtner las variables
 
 %%%%%% %%%%%% %%%%%% %%%%%% %%%%%% %%%%%% %%%%%% %%%%%% %%%%%% %%%%%%
 % DON'T CHANGE ANYTHIG AFTER HERE
@@ -26,7 +26,7 @@ ZI = -1; % Niveles Z deseado en para obtner las variables
 % Extract interannual variables
 %%%%%% %%%%%% %%%%%% %%%%%% %%%%%% %%%%%% %%%%%% %%%%%% %%%%%% %%%%%%
 
-for year = 1995:1999
+for year = 1993:1993
     for month = 1:12
         % You can add variables if necessary
         nc_file = [dir,'roms6b_avg.Y',num2str(year),'.M',num2str(month),'.rl1b.nc'];

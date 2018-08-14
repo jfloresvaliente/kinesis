@@ -12,11 +12,11 @@ library(mapdata)
 library(raster)
 library(mgcv)
 
-dirpath <- 'F:/COLLABORATORS/KINESIS/out_from_source_2018-v4/'
+dirpath <- 'F:/COLLABORATORS/KINESIS/case4/case004-v4/'
 input_path <- 'C:/Users/ASUS/Desktop/input/'
 xlimmap <- c(-100, -70)    # X limits of plot
 ylimmap <- c(-30, -0)      # Y limits of plot
-nfiles  <- 304
+nfiles  <- 730
 
 error_bar <- function(x, a = 0.05){
   # x = vector o matrix with data to evaluate, if x is a matrix, each column will be evaluate
@@ -60,13 +60,15 @@ readDataOutput <- function(dirpath){
   
   df <- NULL
   # surviv <- NULL
-  for(i in 5:nfiles){
+  # for(i in 5:nfiles){
+  for(i in 1:nfiles){
     
     dat <- read.table(file = trajFiles[i], header = F, sep = '')
     dat$V1 <- dat$V1-360
     # if (i == 2) ini_particles <- length(dat$V1)
     dat$day <- rep(i, times = dim(dat)[1])
-    colnames(dat) <- c('lon','lat','exSST','exPY','exSZ','exMZ','knob','Wweight','PA','TGL','drifter','day')
+    # colnames(dat) <- c('lon','lat','exSST','exPY','exSZ','exMZ','knob','Wweight','PA','TGL','drifter','day')
+    colnames(dat) <- c('lon','lat','exSST','knob','Wweight','PA','drifter','day')
     
     if(i < 10) number <- paste0('00',i)
     if(i >= 10 & i <=100) number <- paste0('0',i)
