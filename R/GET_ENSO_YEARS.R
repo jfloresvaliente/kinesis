@@ -1,60 +1,32 @@
 #=============================================================================#
 # Rutina para obtener promedios ENSO YEARS
 #=============================================================================#
-library(akima)
-
-dirpath <- 'C:/Users/ASUS/Desktop/egg_larvae/' # Ruta donde estan almacenados los datos
-filename <- 'PRUEBA_JTM.csv' # Nombre del archivo
-
-dat <- read.csv(paste0(dirpath, filename), sep = ';')
-x <- dat$Long # Vector de longitudes
-y <- dat$Lat  # Vector de latitudes
-z <- dat$Anc_lar_dst # Vector de valores de densidad de huevos o larvas (cambiar de acuerdo al caso)
-
-ini_year <- 1960
-end_year <- 1980
-
-vari_dens <- 'larvae'
+dirpath <- 'F:/COLLABORATORS/KINESIS/' # Ruta donde estan almacenados los datos
 
 # Get ENSO periods
 ENSO <- read.csv(paste0(dirpath, 'ONI_sort.csv'), header = T, sep = ';')
-ENSO <- subset(ENSO, ENSO$year %in% 1961:2018)
+ENSO$category <- as.character(ENSO$category)
 
+ini_period <- matrix(data = NA, nrow = 1, ncol = 2)
+end_period <- NULL
+cates <- ENSO$category[1]
 
-for(i in 1:dim(dat)[1]){
-  row_dat <- dat[i,]
-  if(dim(row_dat)[1] == 0){
-    next()
-  }else{
-    A <- subset(ENSO, ENSO$year == row_dat$Year & ENSO$month == row_dat$Month)
-    dat$category[i] <- as.character(A$category) 
+for(i in 2:dim(ENSO)[1]){
+  
+  if(i == 2) ini_period[1,] <- c(ENSO$year[1], ENSO$month[1])
+  
+  if(ENSO[i,5] != ENSO$category[i-1]){
+    end <- c(ENSO$year[i-1], ENSO$month[i-1])
+    end_period <- rbind(end_period, end)
+    
+    new_ini <- c(ENSO$year[i], ENSO$month[i])
+    ini_period <- rbind(ini_period, new_ini)
+    
+    cates <- c(cates, ENSO[i,5])
   }
+  if(i == dim(ENSO)[1]) end_period <- rbind(end_period, c(ENSO$year[i], ENSO$month[i]))
 }
 
-dat <- cbind(dat[,1:2], x, y, z, dat$category)
-colnames(dat) <- c(colnames(dat)[1:dim(dat)[2]-1], 'category')
-dat <- dat[complete.cases(dat), ] # Filtro para eliminar NA
-
-# row_all <- NULL
-# for(i in 1:dim(ENSO)[1]){
-#   if (i == 1) {
-#     ENSO_ini <- ENSO$category[1]
-#     year_in <- ENSO$year[1]
-#     month_in <- ENSO$month[1]
-#   }else{
-#     if (ENSO_ini != ENSO$category[i]) {
-#       year_end <- ENSO$year[i-1]
-#       month_end <- ENSO$month[i-1]
-#       rowdat <- cbind(year_in, month_in, year_end, month_end, as.character(ENSO_ini))
-#       row_all <- rbind(row_all, rowdat)
-#       
-#       ENSO_ini <- ENSO$category[i]
-#       year_in <- ENSO$year[i]
-#       month_in <- ENSO$month[i]
-#     }
-#   }
-# }
-# colnames(row_all) <- c('year_in', 'month_in', 'year_end', 'month_end', 'category')
-
-
-
+ENSO_periods <- cbind(ini_period, end_period, cates)
+colnames(ENSO_periods) <- c('ini_year', 'ini_month', 'end_year', 'end_month', 'category')
+write.table(x = ENSO_periods, file = paste0(dirpath, 'ENSO_periods.csv'), sep = ';', row.names = F)

@@ -6,7 +6,7 @@
 # Aim    : 
 # URL    : 
 #=============================================================================#
-dirpath <- 'C:/Users/ASUS/Desktop/' # Ruta donde estan almacenados los datos
+dirpath <- 'F:/COLLABORATORS/KINESIS/' # Ruta donde estan almacenados los datos
 
 dat1 <- read.csv(paste0(dirpath, 'ONI.csv'), sep = ';'); dat1 <- as.matrix(dat1[,2:dim(dat1)[2]])
 dat2 <- read.csv(paste0(dirpath, 'ONI_categories.csv'), sep = ';'); dat2 <- as.matrix(dat2[,2:dim(dat2)[2]])

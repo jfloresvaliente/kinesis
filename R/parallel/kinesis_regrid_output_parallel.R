@@ -1,11 +1,11 @@
-#===============================================================================
+#=============================================================================#
 # Name   : kinesis_regrid_output_parallel
 # Author : Jorge Flores
 # Date   : 
 # Version:
 # Aim    : Regrid Kinesis output files with parallel package
 # URL    : 
-#===============================================================================
+#=============================================================================#
 kinesis_regrid_output_parallel <- function(txtfile){
   library(akima)
 
