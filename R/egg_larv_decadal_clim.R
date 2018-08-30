@@ -5,7 +5,7 @@ library(raster)
 library(maps)
 library(mapdata)
 
-dirpath <- 'C:/Users/ASUS/Desktop/egg_larvae/' # Ruta donde estan almacenados los datos
+dirpath <- 'F:/COLLABORATORS/KINESIS/egg_larvae/' # Ruta donde estan almacenados los datos
 filename <- 'PRUEBA_JTM.csv' # Nombre del archivo
 ONI_file1 <- 'ENSO_periods.csv'
 ONI_file2 <- 'ONI_sort.csv'
@@ -27,6 +27,7 @@ dat$z[dat$z == 0] <- NA
 dat <- dat[complete.cases(dat), ] # Filtro para eliminar NA
 
 years <- seq(ini_year, end_year, by = 10)
+res <- 1/12
 
 for(i in 1:length(years)){
   
@@ -40,7 +41,7 @@ for(i in 1:length(years)){
     z <- dat2$z
     
     xy <- matrix(c(x,y), ncol = 2)
-    r <- raster(xmn=-100, xmx=-70, ymn=-40, ymx=15, res=1/6)
+    r <- raster(xmn=-100, xmx=-70, ymn=-40, ymx=15, res=res)
     r[] <- 0
     tab <- table(cellFromXY(r, xy))
     r[as.numeric(names(tab))] <- tab
@@ -69,7 +70,7 @@ for(i in 1:length(years)){
       z <- dat3$z
       
       xy <- matrix(c(x,y), ncol = 2)
-      r <- raster(xmn=-100, xmx=-70, ymn=-40, ymx=15, res=1/6)
+      r <- raster(xmn=-100, xmx=-70, ymn=-40, ymx=15, res=res)
       r[] <- 0
       tab <- table(cellFromXY(r, xy))
       r[as.numeric(names(tab))] <- tab
@@ -108,7 +109,7 @@ for(i in 1:12){
     z <- clim_dat$z
         
     xy <- matrix(c(x,y), ncol = 2)
-    r <- raster(xmn=-100, xmx=-70, ymn=-40, ymx=15, res=1/6)
+    r <- raster(xmn=-100, xmx=-70, ymn=-40, ymx=15, res=res)
     r[] <- 0
     tab <- table(cellFromXY(r, xy))
     r[as.numeric(names(tab))] <- tab
@@ -125,7 +126,7 @@ for(i in 1:12){
     csv_name <- paste0(dirpath, 'output/' ,vari_dens, i, '.csv')
     write.table(x = xyz, file = csv_name, row.names = F, col.names = F, sep = ';')
 
-    # plot(xyz$x-360, xyz$y, xlim = c(-85,-70), ylim = c(-20,0), xlab='', ylab='', pch = 8, axes = F)
+    # plot(xyz$x-360, xyz$y, xlim = c(-85,-70), ylim = c(-20,0), xlab='', ylab='', pch = 20, axes = F)
     # axis(1)
     # axis(2, las = 2)
     # map('worldHires',add=T,fill=T,col='gray')
@@ -164,7 +165,7 @@ for(i in 1:dim(oni1)[1]){
     z <- peridoALL$z
     
     xy <- matrix(c(x,y), ncol = 2)
-    r <- raster(xmn=-100, xmx=-70, ymn=-40, ymx=15, res=1/6)
+    r <- raster(xmn=-100, xmx=-70, ymn=-40, ymx=15, res=res)
     r[] <- 0
     tab <- table(cellFromXY(r, xy))
     r[as.numeric(names(tab))] <- tab
@@ -183,4 +184,4 @@ for(i in 1:dim(oni1)[1]){
   }
 }
 
-
+rm(list = ls())
