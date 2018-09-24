@@ -18,7 +18,7 @@ dir2 = [dir, new_dir, '/'];
 
 %% It's only necessary superficial values
 N = 32; % Nivel rho que representa la superficie
-ZI = -10; % Niveles Z deseado en para obtner las variables
+ZI = -10; % Niveles Z deseado para obtner las variables
 
 %%%%%% %%%%%% %%%%%% %%%%%% %%%%%% %%%%%% %%%%%% %%%%%% %%%%%% %%%%%%
 % DON'T CHANGE ANYTHIG AFTER HERE
