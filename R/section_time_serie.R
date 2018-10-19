@@ -7,13 +7,14 @@
 # URL    : 
 #=============================================================================#
 source('R/getline_rowcol_index.R')
-dirpath <- 'G:/ROMS_SIMULATIONS/ROMS6B_VINCENT_SIMULATION/'
+dirpath <- 'D:/ROMS_SIMULATIONS/ROMS6B_VINCENT_SIMULATION/'
 nc_grid <- paste0(dirpath, 'roms_grd.nc')
 # getline_rowcol_index(nc_grid = nc_grid)
 getline_rowcol_index(nc_grid = nc_grid, lon1 = -80.2, lat1 = -7, lon2 = -77, lat2 = -13)
+getline_rowcol_index(nc_grid = nc_grid)
 
 for(i in 1:dim(LineRowColIndex)[1]){
-  mask[LineRowColIndex[i,1] , LineRowColIndex[i,2]] <- 2
+  mask[LineIndex[i,1] , LineRowColIndex[i,2]] <- 2
 }
 mask[mask != 2] <- NA
 mask[mask == 2] <- 1
