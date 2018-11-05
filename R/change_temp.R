@@ -7,8 +7,8 @@
 # URL    : 
 #=============================================================================#
 dirpath   <- 'D:/ROMS_SIMULATIONS/ROMS6B_VINCENT_SIMULATION/climatologyM/zlev10/'
-ndiv      <- 4 # Numero de grados centigrados que se aumentara la temperatura
-vari      <- 't'
+ndiv      <- 2 # Numero de grados centigrados que se aumentara la temperatura
+vari      <- 'm'
 inputNew  <- paste0(vari, '_' , ndiv, '/')
 
 #---------------Dont change anything--------------------#
