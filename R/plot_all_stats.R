@@ -12,11 +12,11 @@ library(mapdata)
 library(raster)
 library(mgcv)
 
-dirpath <- 'F:/COLLABORATORS/KINESIS/case4/case004-v4/'
-input_path <- 'C:/Users/ASUS/Desktop/input/'
+dirpath <- '/home/jtam/Documents/case4/escenario/out/'
+input_path <- '/home/jtam/Documents/case4/'
 xlimmap <- c(-100, -70)    # X limits of plot
 ylimmap <- c(-30, -0)      # Y limits of plot
-nfiles  <- 730
+nfiles  <- 330
 
 error_bar <- function(x, a = 0.05){
   # x = vector o matrix with data to evaluate, if x is a matrix, each column will be evaluate
@@ -61,14 +61,14 @@ readDataOutput <- function(dirpath){
   df <- NULL
   # surviv <- NULL
   # for(i in 5:nfiles){
-  for(i in 1:nfiles){
+  for(i in 9:nfiles){
     
     dat <- read.table(file = trajFiles[i], header = F, sep = '')
     dat$V1 <- dat$V1-360
     # if (i == 2) ini_particles <- length(dat$V1)
     dat$day <- rep(i, times = dim(dat)[1])
     # colnames(dat) <- c('lon','lat','exSST','exPY','exSZ','exMZ','knob','Wweight','PA','TGL','drifter','day')
-    colnames(dat) <- c('lon','lat','exSST','knob','Wweight','PA','drifter','day')
+    # colnames(dat) <- c('lon','lat','exSST','knob','Wweight','PA','drifter','day')
     
     if(i < 10) number <- paste0('00',i)
     if(i >= 10 & i <=100) number <- paste0('0',i)
@@ -113,24 +113,24 @@ readDataOutput <- function(dirpath){
     df <- rbind(df, dat)
     print(trajFiles[i])
   }
-  # colnames(df) <- c('lon','lat','exSST','exPY','exSZ','exMZ','knob','Wweight','PA','TGL','drifter','day')
-  # colnames(dat)
-  #--------- Calculo retenidos en la costa ---------#
-  lon <- as.matrix(read.table(paste0(input_path, 'lon_grid.csv'), header = F))
-  lat <- as.matrix(read.table(paste0(input_path, 'lat_grid.csv'), header = F))
-  coast <- as.matrix(read.table(paste0(input_path, 'CoastLineIndex.csv'), header = F))
-  
-  xyz <- cbind(as.vector(lon), as.vector(lat), as.vector(coast))
-  r <- rasterFromXYZ(xyz = xyz)
-  SP <- rasterToPolygons(clump(r==1), dissolve=TRUE)
-  k <- SP@polygons[[1]]@Polygons[[1]]@coords
-  
-  lonlat <- as.matrix(dat[,1:2])
-  coastalReteinedIndex <- which(in.out(bnd = k, x = lonlat) == T)
-  coastalReteinedIndex <- subset(dat, dat$drifter %in% coastalReteinedIndex)
-  coastalReteinedIndex <- coastalReteinedIndex$drifter
-  
-  assign('coastalReteinedIndex',coastalReteinedIndex,.GlobalEnv)
+  colnames(df) <- c('lon','lat','exSST','exPY','exSZ','exMZ','knob','Wweight','PA','TGL','drifter','day')
+
+  # #--------- Calculo retenidos en la costa ---------#
+  # lon <- as.matrix(read.table(paste0(input_path, 'lon_grid.csv'), header = F))
+  # lat <- as.matrix(read.table(paste0(input_path, 'lat_grid.csv'), header = F))
+  # coast <- as.matrix(read.table(paste0(input_path, 'CoastLineIndex.csv'), header = F))
+  # 
+  # xyz <- cbind(as.vector(lon), as.vector(lat), as.vector(coast))
+  # r <- rasterFromXYZ(xyz = xyz)
+  # SP <- rasterToPolygons(clump(r==1), dissolve=TRUE)
+  # k <- SP@polygons[[1]]@Polygons[[1]]@coords
+  # 
+  # lonlat <- as.matrix(dat[,1:2])
+  # coastalReteinedIndex <- which(in.out(bnd = k, x = lonlat) == T)
+  # coastalReteinedIndex <- subset(dat, dat$drifter %in% coastalReteinedIndex)
+  # coastalReteinedIndex <- coastalReteinedIndex$drifter
+  # 
+  # assign('coastalReteinedIndex',coastalReteinedIndex,.GlobalEnv)
   #--------- Fin de calculo retenidos en la costa ---------#
   
   # png(filename = paste0(dirpath, 'L-Lc.png'), height = 850, width = 850)
@@ -144,7 +144,7 @@ readDataOutput <- function(dirpath){
 df <- readDataOutput(dirpath = dirpath)
 
 #-------- TALLAS FINALES ----------#
-lastDay <- subset(x = df, df$day == length(levels(factor(df$day))))
+lastDay <- subset(x = df, df$day == max(as.numeric(levels(factor(df$day)))))
 err_bar <- error_bar(lastDay$knob)
 histAlive <- subset(x = lastDay, lastDay$knob > err_bar[1])
 
@@ -377,31 +377,31 @@ map <- map +
 if(!is.null(PNG4)) ggsave(filename = PNG4, width = 9, height = 9) else map
 print(PNG4); flush.console()
 
-#----PLOT ONLY COASTAL RETEINED TRAJECTORIES----#
-coastalReteined <- subset(df, df$drifter %in% coastalReteinedIndex)
-PNG5 <- paste0(dirpath, 'coastalReteinedTrajectories.png')
-# mymap <- get_map(location = c(lon = (lonmin + lonmax) / 2, lat = (latmin + latmax) / 2),
-#                  zoom = 4, maptype = 'satellite', color='bw')
-map   <- ggplot(data = coastalReteined)
-map <- map +
-  geom_path(data = coastalReteined, aes(group = drifter, x = lon, y = lat, colour = knob), size = .1) +
-  scale_colour_gradientn(colours = tim.colors(n = 64, alpha = 1), expression(knob), limits = zlimmap) +
-  labs(x = 'Longitude (W)', y = 'Latitude (S)') +
-  borders(fill='grey',colour='grey') +
-  annotate('text', x = -75, y = -5, label = paste(length(coastalReteinedIndex), 'retenidas en la costa'))+
-  coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +
-  theme(axis.text.x  = element_text(face='bold', color='black',
-                                    size=15, angle=0),
-        axis.text.y  = element_text(face='bold', color='black',
-                                    size=15, angle=0),
-        axis.title.x = element_text(face='bold', color='black',
-                                    size=15, angle=0),
-        axis.title.y = element_text(face='bold', color='black',
-                                    size=15, angle=90),
-        legend.text  = element_text(size=15),
-        legend.title = element_text(size=15))
-if(!is.null(PNG5)) ggsave(filename = PNG5, width = 9, height = 9) else map
-print(PNG5); flush.console()
+# #----PLOT ONLY COASTAL RETEINED TRAJECTORIES----#
+# coastalReteined <- subset(df, df$drifter %in% coastalReteinedIndex)
+# PNG5 <- paste0(dirpath, 'coastalReteinedTrajectories.png')
+# # mymap <- get_map(location = c(lon = (lonmin + lonmax) / 2, lat = (latmin + latmax) / 2),
+# #                  zoom = 4, maptype = 'satellite', color='bw')
+# map   <- ggplot(data = coastalReteined)
+# map <- map +
+#   geom_path(data = coastalReteined, aes(group = drifter, x = lon, y = lat, colour = knob), size = .1) +
+#   scale_colour_gradientn(colours = tim.colors(n = 64, alpha = 1), expression(knob), limits = zlimmap) +
+#   labs(x = 'Longitude (W)', y = 'Latitude (S)') +
+#   borders(fill='grey',colour='grey') +
+#   annotate('text', x = -75, y = -5, label = paste(length(coastalReteinedIndex), 'retenidas en la costa'))+
+#   coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +
+#   theme(axis.text.x  = element_text(face='bold', color='black',
+#                                     size=15, angle=0),
+#         axis.text.y  = element_text(face='bold', color='black',
+#                                     size=15, angle=0),
+#         axis.title.x = element_text(face='bold', color='black',
+#                                     size=15, angle=0),
+#         axis.title.y = element_text(face='bold', color='black',
+#                                     size=15, angle=90),
+#         legend.text  = element_text(size=15),
+#         legend.title = element_text(size=15))
+# if(!is.null(PNG5)) ggsave(filename = PNG5, width = 9, height = 9) else map
+# print(PNG5); flush.console()
 #---- FIN PLOT ONLY COASTAL RETEINED TRAJECTORIES----#
 rm(list = ls())
 #=============================================================================#
