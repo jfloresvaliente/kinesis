@@ -16,7 +16,11 @@ dirpath <- '/home/jtam/Documents/case4/escenario/out/'
 input_path <- '/home/jtam/Documents/case4/'
 xlimmap <- c(-100, -70)    # X limits of plot
 ylimmap <- c(-30, -0)      # Y limits of plot
-nfiles  <- 330
+
+# xlimmap <- c(-85, -70)    # X limits of plot
+# ylimmap <- c(-19, -4.95)      # Y limits of plot
+
+nfiles  <- 350
 
 error_bar <- function(x, a = 0.05){
   # x = vector o matrix with data to evaluate, if x is a matrix, each column will be evaluate
@@ -54,14 +58,19 @@ error_bar <- function(x, a = 0.05){
 
 readDataOutput <- function(dirpath){
   dir.create(paste0(dirpath, 'trajectories/'), showWarnings = F)
+  dir.create(paste0(dirpath, 'figures/'), showWarnings = F)
   trajFiles <- list.files(path = dirpath, pattern = paste0('output','.*\\.txt'), full.names = T, recursive = T)
-  removefiles <- list.files(path = dirpath, pattern = paste0('output','.*\\.dat'), full.names = T, recursive = T)
-  file.remove(removefiles)
+  # removefiles <- list.files(path = dirpath, pattern = paste0('output','.*\\.dat'), full.names = T, recursive = T)
+  # file.remove(removefiles)
   
   df <- NULL
   # surviv <- NULL
   # for(i in 5:nfiles){
-  for(i in 9:nfiles){
+  for(i in 1:nfiles){
+    
+    xscan <- scan(trajFiles[i], quiet = T)
+    
+    if(length(xscan) == 0) next()
     
     dat <- read.table(file = trajFiles[i], header = F, sep = '')
     dat$V1 <- dat$V1-360
@@ -105,6 +114,7 @@ readDataOutput <- function(dirpath){
          lwd = 2, lwd.ticks = 2, font.axis=4, las = 2)
     points(x = dat[,1], y = dat[,2], pch = 19, cex = .1)
     mtext(text = paste('Day', i), side = 3, adj = 0.05, line = -1, font = 2)
+    mtext(text = paste('# Drifter:', dim(dat)[1]), side = 3, adj = 0.05, line = -3, font = 2)
     grid()
     dev.off()
     
@@ -114,7 +124,7 @@ readDataOutput <- function(dirpath){
     print(trajFiles[i])
   }
   colnames(df) <- c('lon','lat','exSST','exPY','exSZ','exMZ','knob','Wweight','PA','TGL','drifter','day')
-
+  
   # #--------- Calculo retenidos en la costa ---------#
   # lon <- as.matrix(read.table(paste0(input_path, 'lon_grid.csv'), header = F))
   # lat <- as.matrix(read.table(paste0(input_path, 'lat_grid.csv'), header = F))
@@ -165,7 +175,7 @@ ylim = c(0,30)
 Wweight_lim <- c(0,60)
 
 #----------Plot Max Growth (all particles)---------#
-png(file = paste0(dirpath, 'MaxGrowth.png'), width = 650, height = 650)
+png(file = paste0(dirpath, '/figures/MaxGrowth.png'), width = 650, height = 650)
 par(lwd = 2, mar = c(3.5,3.5,2,3.5))
 plot(maxGrowth$knob,type = 'l', xlab = '', ylab = '', lwd = 2, axes = F, ylim = ylim)
 mtext(side = 1, line = 2, font = 2, text = 'Days after spawning')
@@ -176,7 +186,7 @@ box(lwd = 2)
 dev.off()
 
 #----------Plot Max Growth (all particles) with Wweight---------#
-png(file = paste0(dirpath, 'MaxGrowth_withWweight.png'), width = 650, height = 650)
+png(file = paste0(dirpath, '/figures/MaxGrowth_withWweight.png'), width = 650, height = 650)
 par(lwd = 2, mar = c(3.5,3.5,2,3.5))
 graf1 <- plot(maxGrowth$knob,type = 'l', xlab = '', ylab = '', lwd = 2, axes = F, ylim = ylim)
 mtext(side = 1, line = 2, font = 2, text = 'Days after spawning')
@@ -192,7 +202,7 @@ dev.off()
 
 #----------Plot Mean Growth (all particles)---------#
 meanGrowth <- tapply(df$knob, list(df$day), mean, na.rm = TRUE)
-png(file = paste0(dirpath, 'meanGrowth.png'), width = 650, height = 650)
+png(file = paste0(dirpath, '/figures/meanGrowth.png'), width = 650, height = 650)
 par(lwd = 2, mar = c(3.5,3.5,2,3.5))
 graf1 = plot(meanGrowth, type = 'l', xlab = '', ylab = '', axes = F, lwd = 2, ylim = ylim)
 mtext(side = 1, line = 2, font = 2, text = 'Days after spawning')
@@ -203,7 +213,7 @@ box(lwd = 2)
 dev.off()
 
 #----------Plot Mean Growth (all particles) with Wweight---------#
-png(file = paste0(dirpath, 'meanGrowth_withWweight.png'), width = 650, height = 650)
+png(file = paste0(dirpath, '/figures/meanGrowth_withWweight.png'), width = 650, height = 650)
 par(lwd = 2, mar = c(3.5,3.5,2,3.5))
 graf2 = plot(meanGrowth, type = 'l', xlab = '', ylab = '', axes = F, lwd = 2, ylim = ylim)
 mtext(side = 1, line = 2, font = 2, text = 'Days after spawning')
@@ -219,7 +229,7 @@ dev.off()
 
 #----------Plot Mean Growth (alive particles)---------#
 meanGrowthAlive <- tapply(alive$knob, list(alive$day), mean, na.rm = TRUE)
-png(file = paste0(dirpath, 'meanGrowthAlive.png'), width = 650, height = 650)
+png(file = paste0(dirpath, '/figures/meanGrowthAlive.png'), width = 650, height = 650)
 par(lwd = 2, mar = c(3.5,3.5,2,3.5))
 plot(meanGrowthAlive, type = 'l', xlab = '', ylab = '', lwd = 2, axes = F, ylim = ylim)
 mtext(side = 1, line = 2, font = 2, text = 'Days after spawning')
@@ -230,7 +240,7 @@ box(lwd = 2)
 dev.off()
 
 #----------Plot Mean Growth (alive particles) with Wweight---------#
-png(file = paste0(dirpath, 'meanGrowthAlive_withWweight.png'), width = 650, height = 650)
+png(file = paste0(dirpath, '/figures/meanGrowthAlive_withWweight.png'), width = 650, height = 650)
 par(lwd = 2, mar = c(3.5,3.5,2,3.5))
 graf3 <- plot(meanGrowthAlive, type = 'l', xlab = '', ylab = '', lwd = 2, axes = F, ylim = ylim)
 mtext(side = 1, line = 2, font = 2, text = 'Days after spawning')
@@ -293,7 +303,7 @@ histxlim <- seq(0,25,.5)
 histylim <- c(0,700)
 histlabels <- seq(histxlim[1], histxlim[length(histxlim)],2)
 
-png(paste0(dirpath, 'histAll.png'), width = 650, height = 650)
+png(paste0(dirpath, '/figures/histAll.png'), width = 650, height = 650)
 par(lwd = 2, mar = c(3.5,4,2,1))
 hist(x = lastDay$knob, breaks = histxlim, axes = F, xlab = '', main = '', ylab = '', ylim = histylim)
 mtext(side = 1, line = 2, font = 2, text = 'knob')
@@ -304,7 +314,7 @@ axis(1, lwd = 2, lwd.ticks = 2, font.axis=4, histlabels, histlabels)
 box(lwd = 2)
 dev.off()
 
-png(paste0(dirpath, 'histAlive.png'), width = 650, height = 650)
+png(paste0(dirpath, '/figures/histAlive.png'), width = 650, height = 650)
 par(lwd = 2, mar = c(3.5,4,2,1))
 b = hist(x = histAlive$knob, breaks = histxlim, axes = F, xlab = '', main = '', ylab = '', lwd = 2, ylim = histylim)
 b = (100 * sum(b$counts)/4000)
@@ -329,53 +339,53 @@ zlimmap <- c(0,18)
 color.limits <- c(0,10)
 
 #----PLOT ALL TRAJECTORIES----#
-PNG3 <- paste0(dirpath, 'allTrajectories.png')
-# mymap <- get_map(location = c(lon = (lonmin + lonmax) / 2, lat = (latmin + latmax) / 2),
-#                  zoom = 4, maptype = 'satellite', color='bw')
-# map   <- ggmap(mymap)
-map <- ggplot(data = df)
-map <- map +
-  geom_path(data = df, aes(group = drifter, x = lon, y = lat, colour = knob), size = .1) +
-  scale_colour_gradientn(colours = tim.colors(n = 64, alpha = 1), expression(knob), limits = zlimmap) +
-  labs(x = 'Longitude (W)', y = 'Latitude (S)') +
-  borders(fill='grey',colour='grey') +
-  coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +
-  theme(axis.text.x  = element_text(face='bold', color='black',
-                                    size=15, angle=0),
-        axis.text.y  = element_text(face='bold', color='black',
-                                    size=15, angle=0),
-        axis.title.x = element_text(face='bold', color='black',
-                                    size=15, angle=0),
-        axis.title.y = element_text(face='bold', color='black',
-                                    size=15, angle=90),
-        legend.text  = element_text(size=15),
-        legend.title = element_text(size=15))
-if(!is.null(PNG3)) ggsave(filename = PNG3, width = 9, height = 9) else map
-print(PNG3); flush.console()
+# PNG3 <- paste0(dirpath, '/figures/allTrajectories.png')
+# # mymap <- get_map(location = c(lon = (lonmin + lonmax) / 2, lat = (latmin + latmax) / 2),
+# #                  zoom = 4, maptype = 'satellite', color='bw')
+# # map   <- ggmap(mymap)
+# map <- ggplot(data = df)
+# map <- map +
+#   geom_path(data = df, aes(group = drifter, x = lon, y = lat, colour = knob), size = .1) +
+#   scale_colour_gradientn(colours = tim.colors(n = 64, alpha = 1), expression(knob), limits = zlimmap) +
+#   labs(x = 'Longitude (W)', y = 'Latitude (S)') +
+#   borders(fill='grey',colour='grey') +
+#   coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +
+#   theme(axis.text.x  = element_text(face='bold', color='black',
+#                                     size=15, angle=0),
+#         axis.text.y  = element_text(face='bold', color='black',
+#                                     size=15, angle=0),
+#         axis.title.x = element_text(face='bold', color='black',
+#                                     size=15, angle=0),
+#         axis.title.y = element_text(face='bold', color='black',
+#                                     size=15, angle=90),
+#         legend.text  = element_text(size=15),
+#         legend.title = element_text(size=15))
+# if(!is.null(PNG3)) ggsave(filename = PNG3, width = 9, height = 9) else map
+# print(PNG3); flush.console()
 
-#----PLOT ONLY RETEINED TRAJECTORIES----#
-PNG4 <- paste0(dirpath, 'reteinedTrajectories.png')
-# mymap <- get_map(location = c(lon = (lonmin + lonmax) / 2, lat = (latmin + latmax) / 2),
-#                  zoom = 4, maptype = 'satellite', color='bw')
-map   <- ggplot(data = alive)
-map <- map +
-  geom_path(data = alive, aes(group = drifter, x = lon, y = lat, colour = knob), size = .1) +
-  scale_colour_gradientn(colours = tim.colors(n = 64, alpha = 1), expression(knob), limits = zlimmap) +
-  labs(x = 'Longitude (W)', y = 'Latitude (S)') +
-  borders(fill='grey',colour='grey') +
-  coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +
-  theme(axis.text.x  = element_text(face='bold', color='black',
-                                    size=15, angle=0),
-        axis.text.y  = element_text(face='bold', color='black',
-                                    size=15, angle=0),
-        axis.title.x = element_text(face='bold', color='black',
-                                    size=15, angle=0),
-        axis.title.y = element_text(face='bold', color='black',
-                                    size=15, angle=90),
-        legend.text  = element_text(size=15),
-        legend.title = element_text(size=15))
-if(!is.null(PNG4)) ggsave(filename = PNG4, width = 9, height = 9) else map
-print(PNG4); flush.console()
+# #----PLOT ONLY RETEINED TRAJECTORIES----#
+# PNG4 <- paste0(dirpath, '/figures/reteinedTrajectories.png')
+# # mymap <- get_map(location = c(lon = (lonmin + lonmax) / 2, lat = (latmin + latmax) / 2),
+# #                  zoom = 4, maptype = 'satellite', color='bw')
+# map   <- ggplot(data = alive)
+# map <- map +
+#   geom_path(data = alive, aes(group = drifter, x = lon, y = lat, colour = knob), size = .1) +
+#   scale_colour_gradientn(colours = tim.colors(n = 64, alpha = 1), expression(knob), limits = zlimmap) +
+#   labs(x = 'Longitude (W)', y = 'Latitude (S)') +
+#   borders(fill='grey',colour='grey') +
+#   coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +
+#   theme(axis.text.x  = element_text(face='bold', color='black',
+#                                     size=15, angle=0),
+#         axis.text.y  = element_text(face='bold', color='black',
+#                                     size=15, angle=0),
+#         axis.title.x = element_text(face='bold', color='black',
+#                                     size=15, angle=0),
+#         axis.title.y = element_text(face='bold', color='black',
+#                                     size=15, angle=90),
+#         legend.text  = element_text(size=15),
+#         legend.title = element_text(size=15))
+# if(!is.null(PNG4)) ggsave(filename = PNG4, width = 9, height = 9) else map
+# print(PNG4); flush.console()
 
 # #----PLOT ONLY COASTAL RETEINED TRAJECTORIES----#
 # coastalReteined <- subset(df, df$drifter %in% coastalReteinedIndex)
@@ -399,7 +409,7 @@ print(PNG4); flush.console()
 #         axis.title.y = element_text(face='bold', color='black',
 #                                     size=15, angle=90),
 #         legend.text  = element_text(size=15),
-#         legend.title = element_text(size=15))
+#         legend.title = element_text(size=1        IF(TGL(C,M).eq.1)then !      only TGL=1.        IF(TGL(C,M).eq.1)then !      only TGL=1.5))
 # if(!is.null(PNG5)) ggsave(filename = PNG5, width = 9, height = 9) else map
 # print(PNG5); flush.console()
 #---- FIN PLOT ONLY COASTAL RETEINED TRAJECTORIES----#
