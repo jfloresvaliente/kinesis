@@ -12,6 +12,7 @@ library(mapdata)
 library(raster)
 library(mgcv)
 
+setwd("~/Documents/case4")
 dirpath <- '/home/jtam/Documents/case4/escenario/out/'
 input_path <- '/home/jtam/Documents/case4/'
 xlimmap <- c(-100, -70)    # X limits of plot
@@ -22,50 +23,50 @@ ylimmap <- c(-30, -0)      # Y limits of plot
 
 nfiles  <- 350
 
-error_bar <- function(x, a = 0.05){
-  # x = vector o matrix with data to evaluate, if x is a matrix, each column will be evaluate
-  # a = intervalo de confianza a evaluar
-  
-  if(!is.null(dim(x))){
-    stat <- NULL
-    for(i in 1:dim(x)[2]){
-      n  <- length(x[,i])
-      m  <- mean(x[,i], na.rm = T)
-      s  <- sd(x[,i], na.rm = T)
-      tt <- -qt(a/2,n-1)
-      ee <- sd(x[,i])/sqrt(n)  # standard error. It is different from the standard deviation
-      e  <- tt*ee          # error range
-      d  <- e/m            # relative error, says that the confidence interval is a percentage of the value
-      li <- m-e            # lower limit
-      ls <- m+e            # upper limit
-      vec <- c(m, li, ls)
-      stat <- rbind(stat, vec)
-    }
-  }else{
-    n  <- length(x)
-    m  <- mean(x, na.rm = T)
-    s  <- sd(x)
-    tt <- -qt(a/2,n-1)
-    ee <- sd(x)/sqrt(n)  # standard error. It is different from the standard deviation
-    e  <- tt*ee          # error range
-    d  <- e/m            # relative error, says that the confidence interval is a percentage of the value
-    li <- m-e            # lower limit
-    ls <- m+e            # upper limit
-    stat <- c(m, li, ls)
-  }
-  return(stat)
-}
+# error_bar <- function(x, a = 0.05){
+#   # x = vector o matrix with data to evaluate, if x is a matrix, each column will be evaluate
+#   # a = intervalo de confianza a evaluar
+#   
+#   if(!is.null(dim(x))){
+#     stat <- NULL
+#     for(i in 1:dim(x)[2]){
+#       n  <- length(x[,i])
+#       m  <- mean(x[,i], na.rm = T)
+#       s  <- sd(x[,i], na.rm = T)
+#       tt <- -qt(a/2,n-1)
+#       ee <- sd(x[,i])/sqrt(n)  # standard error. It is different from the standard deviation
+#       e  <- tt*ee          # error range
+#       d  <- e/m            # relative error, says that the confidence interval is a percentage of the value
+#       li <- m-e            # lower limit
+#       ls <- m+e            # upper limit
+#       vec <- c(m, li, ls)
+#       stat <- rbind(stat, vec)
+#     }
+#   }else{
+#     n  <- length(x)
+#     m  <- mean(x, na.rm = T)
+#     s  <- sd(x)
+#     tt <- -qt(a/2,n-1)
+#     ee <- sd(x)/sqrt(n)  # standard error. It is different from the standard deviation
+#     e  <- tt*ee          # error range
+#     d  <- e/m            # relative error, says that the confidence interval is a percentage of the value
+#     li <- m-e            # lower limit
+#     ls <- m+e            # upper limit
+#     stat <- c(m, li, ls)
+#   }
+#   return(stat)
+# }
 
 readDataOutput <- function(dirpath){
   dir.create(paste0(dirpath, 'trajectories/'), showWarnings = F)
   dir.create(paste0(dirpath, 'figures/'), showWarnings = F)
   trajFiles <- list.files(path = dirpath, pattern = paste0('output','.*\\.txt'), full.names = T, recursive = T)
+  sstFiles <- list.files(path = dirpath, pattern = paste0('SST','.*\\.txt'), full.names = T, recursive = T)
   # removefiles <- list.files(path = dirpath, pattern = paste0('output','.*\\.dat'), full.names = T, recursive = T)
   # file.remove(removefiles)
   
   df <- NULL
-  # surviv <- NULL
-  # for(i in 5:nfiles){
+  surviv <- NULL
   for(i in 1:nfiles){
     
     xscan <- scan(trajFiles[i], quiet = T)
@@ -74,11 +75,15 @@ readDataOutput <- function(dirpath){
     
     dat <- read.table(file = trajFiles[i], header = F, sep = '')
     dat$V1 <- dat$V1-360
-    # if (i == 2) ini_particles <- length(dat$V1)
     dat$day <- rep(i, times = dim(dat)[1])
-    # colnames(dat) <- c('lon','lat','exSST','exPY','exSZ','exMZ','knob','Wweight','PA','TGL','drifter','day')
-    # colnames(dat) <- c('lon','lat','exSST','knob','Wweight','PA','drifter','day')
     
+    sstdat <- read.table(file = sstFiles[i], header = F, sep = '')
+    # Define new lon-lat values for new grid (by = indicates spatial resolution in degrees)
+    x0 <- seq(from = -100, to = -70, by = 1/6)
+    y0 <- seq(from = -40 , to = 15 , by = 1/6) 
+    # new_dat <- interp(x,y,z, xo = x0, yo = y0)
+    # newz <- new_dat[[3]]
+
     if(i < 10) number <- paste0('00',i)
     if(i >= 10 & i <=100) number <- paste0('0',i)
     if(i > 100) number <- i
@@ -112,51 +117,82 @@ readDataOutput <- function(dirpath){
          lwd = 2, lwd.ticks = 2, font.axis=4)
     axis(side = 2, at = seq(ylimmap[1], ylimmap[2], 5), labels = seq(ylimmap[1], ylimmap[2], 5),
          lwd = 2, lwd.ticks = 2, font.axis=4, las = 2)
-    points(x = dat[,1], y = dat[,2], pch = 19, cex = .1)
+    points(x = dat[,1], y = dat[,2], pch = 19, cex = .2, col = 'red')
     mtext(text = paste('Day', i), side = 3, adj = 0.05, line = -1, font = 2)
     mtext(text = paste('# Drifter:', dim(dat)[1]), side = 3, adj = 0.05, line = -3, font = 2)
     grid()
     dev.off()
     
+    #---------- PLOT WITH R BASE + SST MAP----------#
+    PNGsst <- paste0(dirpath,'trajectories/', '/AllTrajectoriesSST',number ,'.png')
+    png(file = PNGsst, height = 650, width = 650)
+    par(mar = c(1,2,1,2), oma = c(2,1,.5,.5))
+    image.plot(x0, y0, sstdat, ylim = ylimmap, xlim = xlimmap, zlim = c(10,30), axes = F, xlab ='', ylab = '')
+    map('worldHires', add=T, fill=T, col='gray', ylim = ylimmap, xlim = xlimmap)
+    box(lwd = 2)
+    axis(side = 1, at = seq(xlimmap[1], xlimmap[2], 5), labels = seq(xlimmap[1],xlimmap[2], 5),
+         lwd = 2, lwd.ticks = 2, font.axis=4)
+    axis(side = 2, at = seq(ylimmap[1], ylimmap[2], 5), labels = seq(ylimmap[1], ylimmap[2], 5),
+         lwd = 2, lwd.ticks = 2, font.axis=4, las = 2)
+    points(x = dat[,1], y = dat[,2], pch = 19, cex = .2, col = 'black')
+    mtext(text = paste('Day', i), side = 3, adj = 0.05, line = -1, font = 2)
+    mtext(text = paste('# Drifter:', dim(dat)[1]), side = 3, adj = 0.05, line = -3, font = 2)
+    grid()
+    dev.off()
+    
+    # ini_particles <- 5880
     # survivor <- sum(dat$knob >= error_bar(x = dat$knob)[1]) * 100 / ini_particles
     # surviv <- c(surviv, survivor)
+    
     df <- rbind(df, dat)
     print(trajFiles[i])
   }
   colnames(df) <- c('lon','lat','exSST','exPY','exSZ','exMZ','knob','Wweight','PA','TGL','drifter','day')
   
-  # #--------- Calculo retenidos en la costa ---------#
-  # lon <- as.matrix(read.table(paste0(input_path, 'lon_grid.csv'), header = F))
-  # lat <- as.matrix(read.table(paste0(input_path, 'lat_grid.csv'), header = F))
-  # coast <- as.matrix(read.table(paste0(input_path, 'CoastLineIndex.csv'), header = F))
-  # 
-  # xyz <- cbind(as.vector(lon), as.vector(lat), as.vector(coast))
-  # r <- rasterFromXYZ(xyz = xyz)
-  # SP <- rasterToPolygons(clump(r==1), dissolve=TRUE)
-  # k <- SP@polygons[[1]]@Polygons[[1]]@coords
-  # 
-  # lonlat <- as.matrix(dat[,1:2])
-  # coastalReteinedIndex <- which(in.out(bnd = k, x = lonlat) == T)
-  # coastalReteinedIndex <- subset(dat, dat$drifter %in% coastalReteinedIndex)
-  # coastalReteinedIndex <- coastalReteinedIndex$drifter
-  # 
-  # assign('coastalReteinedIndex',coastalReteinedIndex,.GlobalEnv)
+  #--------- Calculo retenidos en la costa ---------#
+   # lon <- as.matrix(read.table(paste0(input_path, 'lon_grid.csv'), header = F))
+   # lat <- as.matrix(read.table(paste0(input_path, 'lat_grid.csv'), header = F))
+   # coast <- as.matrix(read.table(paste0(input_path, 'CoastLineIndex.csv'), header = F))
+   # 
+   # xyz <- cbind(as.vector(lon), as.vector(lat), as.vector(coast))
+   # r <- rasterFromXYZ(xyz = xyz)
+   # SP <- rasterToPolygons(clump(r==1), dissolve=TRUE)
+   # k <- SP@polygons[[1]]@Polygons[[1]]@coords
+   # 
+   # lonlat <- as.matrix(dat[,1:2])
+   # coastalReteinedIndex <- which(in.out(bnd = k, x = lonlat) == T)
+   # coastalReteinedIndex <- subset(dat, dat$drifter %in% coastalReteinedIndex)
+   # coastalReteinedIndex <- coastalReteinedIndex$drifter
+   # 
+   # assign('coastalReteinedIndex',coastalReteinedIndex,.GlobalEnv)
   #--------- Fin de calculo retenidos en la costa ---------#
-  
+
   # png(filename = paste0(dirpath, 'L-Lc.png'), height = 850, width = 850)
   # plot(surviv, type = 'l', xlab = 'Days of simulation', ylab = '%(L > Lc)', ylim = c(0,100))
   # dev.off()
-  
-  # colnames(dat) <- c('lon','lat','exSST','exPY','exSZ','exMZ','knob','Wweight','PA','TGL','drifter','day','coastalIndex')
-  # colnames(df) <- c('lon','lat','temp','knob','Wweight','drifter','day')
   return(df)
 }
 df <- readDataOutput(dirpath = dirpath)
 
+
+# VB - (Marzloff et all 2009)
+Linf <- 20.5
+k    <- 0.86
+t0   <- -0.14
+
+t_serie <- 1:(365*10)/365
+L0   <- Linf * (1 - exp(-k*(t_serie-t0)))
+
+# x11();plot(t_serie, L0, type = 'l', yaxs = 'i', xaxs = 'i')
+# abline(v = 1)
+
+per40 <- L0[365]
+per40 <- per40 - (per40 * 40)/100 # Regla del 40%
+
 #-------- TALLAS FINALES ----------#
 lastDay <- subset(x = df, df$day == max(as.numeric(levels(factor(df$day)))))
-err_bar <- error_bar(lastDay$knob)
-histAlive <- subset(x = lastDay, lastDay$knob > err_bar[1])
+# err_bar <- error_bar(lastDay$knob)
+histAlive <- subset(x = lastDay, lastDay$knob > per40)
 
 aliveIndex <- levels(factor(histAlive$drifter))
 alive <- subset(df, df$drifter %in% aliveIndex)
@@ -254,49 +290,7 @@ axis(4, lwd=2,line=0, col='red',  col.axis = 'red', las = 2)
 mtext(side = 4, line = 2, font = 2, text = 'Wweight', col = 'red')
 dev.off()
 
-# #----- PLOT MAP DE ALIVE PARTICLES -----#
-# for(i in 2:length(levels(factor(alive$day)))){
-#   
-#   df2 <- subset(alive, alive$day == i)
-#   
-#   if(i < 10) number <- paste0('00',i)
-#   if(i >= 10 & i <=100) number <- paste0('0',i)
-#   if(i > 100) number <- i
-#   
-#   PNG2 <- paste0(dirpath,'trajectories/', '/AliveTrajectories', number,'.png')
-#   # #---------- PLOT WITH GGPLOT2 ----------#
-#   # graph <- ggplot(data = df2) +
-#   #   geom_point(data = df2, aes(x = lon, y = lat), color = 'black',size = .2) +
-#   #   borders(fill='grey',colour='grey') +
-#   #   labs(x = 'Longitude (W)', y = 'Latitude (S)') +
-#   #   coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +
-#   #   geom_text(x = -98, y = -29, label = paste('Day', i), size=10, hjust=0, vjust=0) +
-#   #   theme(axis.text.x  = element_text(face='bold', color='black',
-#   #                                     size=15, angle=0),
-#   #         axis.text.y  = element_text(face='bold', color='black',
-#   #                                     size=15, angle=0),
-#   #         axis.title.x = element_text(face='bold', color='black',
-#   #                                     size=15, angle=0),
-#   #         axis.title.y = element_text(face='bold', color='black',
-#   #                                     size=15, angle=90),
-#   #         legend.text  = element_text(size=15),
-#   #         legend.title = element_text(size=15))
-#   # if(!is.null(PNG2)) ggsave(filename = PNG2, width = 9, height = 9) else map
-#   
-#   #---------- PLOT WITH R BASE ----------#
-#   png(file = PNG2, height = 650, width = 650)
-#   par(mar = c(1,2,1,2), oma = c(2,1,.5,.5))
-#   map('worldHires', add=F, fill=T, col='gray', ylim = ylimmap, xlim = xlimmap)
-#   box(lwd = 2)
-#   axis(side = 1, at = seq(xlimmap[1], xlimmap[2], 5), labels = seq(xlimmap[1], xlimmap[2], 5), lwd = 2, lwd.ticks = 2, font.axis=4)
-#   axis(side = 2, at = seq(ylimmap[1], ylimmap[2], 5), labels = seq(ylimmap[1], ylimmap[2], 5),
-#        lwd = 2, lwd.ticks = 2, font.axis=4, las = 2)
-#   points(x = df2[,1], y = df2[,2], pch = 19, cex = .1)
-#   mtext(text = paste('Day', i), side = 3, adj = 0.05, line = -1, font = 2)
-#   grid()
-#   dev.off()
-#   print(PNG2)
-# }
+
 
 #--------- Plot histogram for final length -----------#
 histxlim <- seq(0,25,.5)
@@ -327,6 +321,50 @@ axis(1, lwd = 2, lwd.ticks = 2, font.axis=4, histlabels, histlabels)
 box(lwd = 2)
 dev.off()
 
+#----- PLOT MAP DE ALIVE PARTICLES -----#
+for(i in 2:length(levels(factor(alive$day)))){
+  
+  df2 <- subset(alive, alive$day == i)
+  
+  if(i < 10) number <- paste0('00',i)
+  if(i >= 10 & i <=100) number <- paste0('0',i)
+  if(i > 100) number <- i
+  
+  PNG2 <- paste0(dirpath,'trajectories/', '/AliveTrajectories', number,'.png')
+  # #---------- PLOT WITH GGPLOT2 ----------#
+  # graph <- ggplot(data = df2) +
+  #   geom_point(data = df2, aes(x = lon, y = lat), color = 'black',size = .2) +
+  #   borders(fill='grey',colour='grey') +
+  #   labs(x = 'Longitude (W)', y = 'Latitude (S)') +
+  #   coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +
+  #   geom_text(x = -98, y = -29, label = paste('Day', i), size=10, hjust=0, vjust=0) +
+  #   theme(axis.text.x  = element_text(face='bold', color='black',
+  #                                     size=15, angle=0),
+  #         axis.text.y  = element_text(face='bold', color='black',
+  #                                     size=15, angle=0),
+  #         axis.title.x = element_text(face='bold', color='black',
+  #                                     size=15, angle=0),
+  #         axis.title.y = element_text(face='bold', color='black',
+  #                                     size=15, angle=90),
+  #         legend.text  = element_text(size=15),
+  #         legend.title = element_text(size=15))
+  # if(!is.null(PNG2)) ggsave(filename = PNG2, width = 9, height = 9) else map
+  
+  #---------- PLOT WITH R BASE ----------#
+  png(file = PNG2, height = 650, width = 650)
+  par(mar = c(1,2,1,2), oma = c(2,1,.5,.5))
+  map('worldHires', add=F, fill=T, col='gray', ylim = ylimmap, xlim = xlimmap)
+  box(lwd = 2)
+  axis(side = 1, at = seq(xlimmap[1], xlimmap[2], 5), labels = seq(xlimmap[1], xlimmap[2], 5), lwd = 2, lwd.ticks = 2, font.axis=4)
+  axis(side = 2, at = seq(ylimmap[1], ylimmap[2], 5), labels = seq(ylimmap[1], ylimmap[2], 5),
+       lwd = 2, lwd.ticks = 2, font.axis=4, las = 2)
+  points(x = df2[,1], y = df2[,2], pch = 19, cex = .2, col = 'red')
+  mtext(text = paste('Day', i), side = 3, adj = 0.05, line = -1, font = 2)
+  grid()
+  dev.off()
+  print(PNG2)
+}
+
 #--------  PLOT TRAJECTORIES --------#
 # Domain (by default) for plots, you can change this geographical domain
 lonmin  <- -100
@@ -339,53 +377,53 @@ zlimmap <- c(0,18)
 color.limits <- c(0,10)
 
 #----PLOT ALL TRAJECTORIES----#
-# PNG3 <- paste0(dirpath, '/figures/allTrajectories.png')
-# # mymap <- get_map(location = c(lon = (lonmin + lonmax) / 2, lat = (latmin + latmax) / 2),
-# #                  zoom = 4, maptype = 'satellite', color='bw')
-# # map   <- ggmap(mymap)
-# map <- ggplot(data = df)
-# map <- map +
-#   geom_path(data = df, aes(group = drifter, x = lon, y = lat, colour = knob), size = .1) +
-#   scale_colour_gradientn(colours = tim.colors(n = 64, alpha = 1), expression(knob), limits = zlimmap) +
-#   labs(x = 'Longitude (W)', y = 'Latitude (S)') +
-#   borders(fill='grey',colour='grey') +
-#   coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +
-#   theme(axis.text.x  = element_text(face='bold', color='black',
-#                                     size=15, angle=0),
-#         axis.text.y  = element_text(face='bold', color='black',
-#                                     size=15, angle=0),
-#         axis.title.x = element_text(face='bold', color='black',
-#                                     size=15, angle=0),
-#         axis.title.y = element_text(face='bold', color='black',
-#                                     size=15, angle=90),
-#         legend.text  = element_text(size=15),
-#         legend.title = element_text(size=15))
-# if(!is.null(PNG3)) ggsave(filename = PNG3, width = 9, height = 9) else map
-# print(PNG3); flush.console()
+PNG3 <- paste0(dirpath, '/figures/allTrajectories.png')
+# mymap <- get_map(location = c(lon = (lonmin + lonmax) / 2, lat = (latmin + latmax) / 2),
+#                  zoom = 4, maptype = 'satellite', color='bw')
+# map   <- ggmap(mymap)
+map <- ggplot(data = df)
+map <- map +
+  geom_path(data = df, aes(group = drifter, x = lon, y = lat, colour = knob), size = .1) +
+  scale_colour_gradientn(colours = tim.colors(n = 64, alpha = 1), expression(knob), limits = zlimmap) +
+  labs(x = 'Longitude (W)', y = 'Latitude (S)') +
+  borders(fill='grey',colour='grey') +
+  coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +
+  theme(axis.text.x  = element_text(face='bold', color='black',
+                                    size=15, angle=0),
+        axis.text.y  = element_text(face='bold', color='black',
+                                    size=15, angle=0),
+        axis.title.x = element_text(face='bold', color='black',
+                                    size=15, angle=0),
+        axis.title.y = element_text(face='bold', color='black',
+                                    size=15, angle=90),
+        legend.text  = element_text(size=15),
+        legend.title = element_text(size=15))
+if(!is.null(PNG3)) ggsave(filename = PNG3, width = 9, height = 9) else map
+print(PNG3); flush.console()
 
-# #----PLOT ONLY RETEINED TRAJECTORIES----#
-# PNG4 <- paste0(dirpath, '/figures/reteinedTrajectories.png')
-# # mymap <- get_map(location = c(lon = (lonmin + lonmax) / 2, lat = (latmin + latmax) / 2),
-# #                  zoom = 4, maptype = 'satellite', color='bw')
-# map   <- ggplot(data = alive)
-# map <- map +
-#   geom_path(data = alive, aes(group = drifter, x = lon, y = lat, colour = knob), size = .1) +
-#   scale_colour_gradientn(colours = tim.colors(n = 64, alpha = 1), expression(knob), limits = zlimmap) +
-#   labs(x = 'Longitude (W)', y = 'Latitude (S)') +
-#   borders(fill='grey',colour='grey') +
-#   coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +
-#   theme(axis.text.x  = element_text(face='bold', color='black',
-#                                     size=15, angle=0),
-#         axis.text.y  = element_text(face='bold', color='black',
-#                                     size=15, angle=0),
-#         axis.title.x = element_text(face='bold', color='black',
-#                                     size=15, angle=0),
-#         axis.title.y = element_text(face='bold', color='black',
-#                                     size=15, angle=90),
-#         legend.text  = element_text(size=15),
-#         legend.title = element_text(size=15))
-# if(!is.null(PNG4)) ggsave(filename = PNG4, width = 9, height = 9) else map
-# print(PNG4); flush.console()
+#----PLOT ONLY RETEINED TRAJECTORIES----#
+PNG4 <- paste0(dirpath, '/figures/reteinedTrajectories.png')
+# mymap <- get_map(location = c(lon = (lonmin + lonmax) / 2, lat = (latmin + latmax) / 2),
+#                  zoom = 4, maptype = 'satellite', color='bw')
+map   <- ggplot(data = alive)
+map <- map +
+  geom_path(data = alive, aes(group = drifter, x = lon, y = lat, colour = knob), size = .1) +
+  scale_colour_gradientn(colours = tim.colors(n = 64, alpha = 1), expression(knob), limits = zlimmap) +
+  labs(x = 'Longitude (W)', y = 'Latitude (S)') +
+  borders(fill='grey',colour='grey') +
+  coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +
+  theme(axis.text.x  = element_text(face='bold', color='black',
+                                    size=15, angle=0),
+        axis.text.y  = element_text(face='bold', color='black',
+                                    size=15, angle=0),
+        axis.title.x = element_text(face='bold', color='black',
+                                    size=15, angle=0),
+        axis.title.y = element_text(face='bold', color='black',
+                                    size=15, angle=90),
+        legend.text  = element_text(size=15),
+        legend.title = element_text(size=15))
+if(!is.null(PNG4)) ggsave(filename = PNG4, width = 9, height = 9) else map
+print(PNG4); flush.console()
 
 # #----PLOT ONLY COASTAL RETEINED TRAJECTORIES----#
 # coastalReteined <- subset(df, df$drifter %in% coastalReteinedIndex)
@@ -413,7 +451,64 @@ color.limits <- c(0,10)
 # if(!is.null(PNG5)) ggsave(filename = PNG5, width = 9, height = 9) else map
 # print(PNG5); flush.console()
 #---- FIN PLOT ONLY COASTAL RETEINED TRAJECTORIES----#
-rm(list = ls())
+
+#----PLOT DENSITY MAP - FINAL DAY - ALL PARTICLES ----#
+PNG6 <- paste0(dirpath, '/figures/densityMapAll.png')
+map <- ggplot(data = lastDay, aes(x = lon, y = lat))
+map <- map + geom_point(data = lastDay, aes(x = lon, y = lat),colour ="black",size = .001)+
+  
+  geom_density2d(data = lastDay, aes(x = lon, y = lat), size = 0.05)+
+  stat_density2d(data = lastDay, aes(x = lon, y = lat, fill = ..level.., alpha = ..level..), size = 0.01, geom = "polygon")+
+
+  scale_fill_gradient(low = "green", high = "red",expression(Density), limits = c(0,0.025))+
+  # scale_colour_gradientn(colours = tim.colors(n = 64, alpha = 1), expression(Density), limits = c(0,1))+
+  
+  scale_alpha(range = c(0, 0.5), guide = FALSE)+
+  labs(x = 'Longitude (W)', y = 'Latitude (S)') +
+  borders(fill='grey',colour='grey') +
+  coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +
+  theme(axis.text.x  = element_text(face='bold', color='black',
+                                    size=15, angle=0),
+        axis.text.y  = element_text(face='bold', color='black',
+                                    size=15, angle=0),
+        axis.title.x = element_text(face='bold', color='black',
+                                    size=15, angle=0),
+        axis.title.y = element_text(face='bold', color='black',
+                                    size=15, angle=90),
+        legend.text  = element_text(size=15),
+        legend.title = element_text(size=15))
+if(!is.null(PNG6)) ggsave(filename = PNG6, width = 9, height = 9) else map
+print(PNG6); flush.console()
+
+#----PLOT DENSITY MAP - FINAL DAY - ALL PARTICLES ----#
+alive_final_day <- subset(alive, alive$day == max(as.numeric(levels(factor(df$day)))))
+PNG7 <- paste0(dirpath, '/figures/densityMapAlive.png')
+map <- ggplot(data = alive_final_day, aes(x = lon, y = lat))
+map <- map + geom_point(data = alive_final_day, aes(x = lon, y = lat),colour ="black",size = .001)+
+  
+  geom_density2d(data = alive_final_day, aes(x = lon, y = lat), size = 0.05)+
+  stat_density2d(data = alive_final_day, aes(x = lon, y = lat, fill = ..level.., alpha = ..level..), size = 0.01, geom = "polygon")+
+  
+  scale_fill_gradient(low = "green", high = "red",expression(Density), limits = c(0,0.05))+
+  # scale_colour_gradientn(colours = tim.colors(n = 64, alpha = 1), expression(Density), limits = c(0,1))+
+  
+  scale_alpha(range = c(0, 0.5), guide = FALSE)+
+  labs(x = 'Longitude (W)', y = 'Latitude (S)') +
+  borders(fill='grey',colour='grey') +
+  coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +
+  theme(axis.text.x  = element_text(face='bold', color='black',
+                                    size=15, angle=0),
+        axis.text.y  = element_text(face='bold', color='black',
+                                    size=15, angle=0),
+        axis.title.x = element_text(face='bold', color='black',
+                                    size=15, angle=0),
+        axis.title.y = element_text(face='bold', color='black',
+                                    size=15, angle=90),
+        legend.text  = element_text(size=15),
+        legend.title = element_text(size=15))
+if(!is.null(PNG7)) ggsave(filename = PNG7, width = 9, height = 9) else map
+print(PNG7); flush.console()
+# rm(list = ls())
 #=============================================================================#
 # END OF PROGRAM
 #=============================================================================#
