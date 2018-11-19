@@ -12,61 +12,28 @@ library(mapdata)
 library(raster)
 library(mgcv)
 
-setwd("~/Documents/case4")
-dirpath <- '/home/jtam/Documents/case4/escenario/out/'
-input_path <- '/home/jtam/Documents/case4/'
+# setwd("~/Documents/case4")
+dirpath <- 'C:/Users/ASUS/Desktop/source_out_OK/out/'
+# input_path <- 'F:/'
 xlimmap <- c(-100, -70)    # X limits of plot
 ylimmap <- c(-30, -0)      # Y limits of plot
 
 # xlimmap <- c(-85, -70)    # X limits of plot
 # ylimmap <- c(-19, -4.95)      # Y limits of plot
 
-nfiles  <- 350
-
-# error_bar <- function(x, a = 0.05){
-#   # x = vector o matrix with data to evaluate, if x is a matrix, each column will be evaluate
-#   # a = intervalo de confianza a evaluar
-#   
-#   if(!is.null(dim(x))){
-#     stat <- NULL
-#     for(i in 1:dim(x)[2]){
-#       n  <- length(x[,i])
-#       m  <- mean(x[,i], na.rm = T)
-#       s  <- sd(x[,i], na.rm = T)
-#       tt <- -qt(a/2,n-1)
-#       ee <- sd(x[,i])/sqrt(n)  # standard error. It is different from the standard deviation
-#       e  <- tt*ee          # error range
-#       d  <- e/m            # relative error, says that the confidence interval is a percentage of the value
-#       li <- m-e            # lower limit
-#       ls <- m+e            # upper limit
-#       vec <- c(m, li, ls)
-#       stat <- rbind(stat, vec)
-#     }
-#   }else{
-#     n  <- length(x)
-#     m  <- mean(x, na.rm = T)
-#     s  <- sd(x)
-#     tt <- -qt(a/2,n-1)
-#     ee <- sd(x)/sqrt(n)  # standard error. It is different from the standard deviation
-#     e  <- tt*ee          # error range
-#     d  <- e/m            # relative error, says that the confidence interval is a percentage of the value
-#     li <- m-e            # lower limit
-#     ls <- m+e            # upper limit
-#     stat <- c(m, li, ls)
-#   }
-#   return(stat)
-# }
+nfiles  <- 310
 
 readDataOutput <- function(dirpath){
   dir.create(paste0(dirpath, 'trajectories/'), showWarnings = F)
   dir.create(paste0(dirpath, 'figures/'), showWarnings = F)
   trajFiles <- list.files(path = dirpath, pattern = paste0('output','.*\\.txt'), full.names = T, recursive = T)
-  sstFiles <- list.files(path = dirpath, pattern = paste0('SST','.*\\.txt'), full.names = T, recursive = T)
+  # sstFiles <- list.files(path = dirpath, pattern = paste0('SST','.*\\.txt'), full.names = T, recursive = T)
   # removefiles <- list.files(path = dirpath, pattern = paste0('output','.*\\.dat'), full.names = T, recursive = T)
   # file.remove(removefiles)
   
   df <- NULL
-  surviv <- NULL
+  # surviv <- NULL
+  edad_ini <- 1
   for(i in 1:nfiles){
     
     xscan <- scan(trajFiles[i], quiet = T)
@@ -76,8 +43,20 @@ readDataOutput <- function(dirpath){
     dat <- read.table(file = trajFiles[i], header = F, sep = '')
     dat$V1 <- dat$V1-360
     dat$day <- rep(i, times = dim(dat)[1])
+    dat$edad <- dat$V10
+    dat$edad[dat$edad == 0.5] <- 0
+    dat$edad <- dat$edad + i
     
-    sstdat <- read.table(file = sstFiles[i], header = F, sep = '')
+    if(i != 1){
+      dat$V10[dat$V10 == 0.5] <- NA
+      dat <- dat[complete.cases(dat), ]
+    }
+    if(i == 1){
+      next()
+    }
+    
+    
+    # sstdat <- read.table(file = sstFiles[i], header = F, sep = '')
     # Define new lon-lat values for new grid (by = indicates spatial resolution in degrees)
     x0 <- seq(from = -100, to = -70, by = 1/6)
     y0 <- seq(from = -40 , to = 15 , by = 1/6) 
@@ -123,22 +102,22 @@ readDataOutput <- function(dirpath){
     grid()
     dev.off()
     
-    #---------- PLOT WITH R BASE + SST MAP----------#
-    PNGsst <- paste0(dirpath,'trajectories/', '/AllTrajectoriesSST',number ,'.png')
-    png(file = PNGsst, height = 650, width = 650)
-    par(mar = c(1,2,1,2), oma = c(2,1,.5,.5))
-    image.plot(x0, y0, sstdat, ylim = ylimmap, xlim = xlimmap, zlim = c(10,30), axes = F, xlab ='', ylab = '')
-    map('worldHires', add=T, fill=T, col='gray', ylim = ylimmap, xlim = xlimmap)
-    box(lwd = 2)
-    axis(side = 1, at = seq(xlimmap[1], xlimmap[2], 5), labels = seq(xlimmap[1],xlimmap[2], 5),
-         lwd = 2, lwd.ticks = 2, font.axis=4)
-    axis(side = 2, at = seq(ylimmap[1], ylimmap[2], 5), labels = seq(ylimmap[1], ylimmap[2], 5),
-         lwd = 2, lwd.ticks = 2, font.axis=4, las = 2)
-    points(x = dat[,1], y = dat[,2], pch = 19, cex = .2, col = 'black')
-    mtext(text = paste('Day', i), side = 3, adj = 0.05, line = -1, font = 2)
-    mtext(text = paste('# Drifter:', dim(dat)[1]), side = 3, adj = 0.05, line = -3, font = 2)
-    grid()
-    dev.off()
+    # #---------- PLOT WITH R BASE + SST MAP----------#
+    # PNGsst <- paste0(dirpath,'trajectories/', '/AllTrajectoriesSST',number ,'.png')
+    # png(file = PNGsst, height = 650, width = 650)
+    # par(mar = c(1,2,1,2), oma = c(2,1,.5,.5))
+    # image.plot(x0, y0, sstdat, ylim = ylimmap, xlim = xlimmap, zlim = c(10,30), axes = F, xlab ='', ylab = '')
+    # map('worldHires', add=T, fill=T, col='gray', ylim = ylimmap, xlim = xlimmap)
+    # box(lwd = 2)
+    # axis(side = 1, at = seq(xlimmap[1], xlimmap[2], 5), labels = seq(xlimmap[1],xlimmap[2], 5),
+    #      lwd = 2, lwd.ticks = 2, font.axis=4)
+    # axis(side = 2, at = seq(ylimmap[1], ylimmap[2], 5), labels = seq(ylimmap[1], ylimmap[2], 5),
+    #      lwd = 2, lwd.ticks = 2, font.axis=4, las = 2)
+    # points(x = dat[,1], y = dat[,2], pch = 19, cex = .2, col = 'black')
+    # mtext(text = paste('Day', i), side = 3, adj = 0.05, line = -1, font = 2)
+    # mtext(text = paste('# Drifter:', dim(dat)[1]), side = 3, adj = 0.05, line = -3, font = 2)
+    # grid()
+    # dev.off()
     
     # ini_particles <- 5880
     # survivor <- sum(dat$knob >= error_bar(x = dat$knob)[1]) * 100 / ini_particles
