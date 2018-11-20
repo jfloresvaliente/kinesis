@@ -13,7 +13,7 @@ library(raster)
 library(mgcv)
 
 # setwd("~/Documents/case4")
-dirpath <- 'C:/Users/ASUS/Desktop/source_out_OK/out/'
+dirpath <- 'C:/Users/ASUS/Desktop/source_out_ok/out/'
 # input_path <- 'F:/'
 xlimmap <- c(-100, -70)    # X limits of plot
 ylimmap <- c(-30, -0)      # Y limits of plot
@@ -21,7 +21,8 @@ ylimmap <- c(-30, -0)      # Y limits of plot
 # xlimmap <- c(-85, -70)    # X limits of plot
 # ylimmap <- c(-19, -4.95)      # Y limits of plot
 
-nfiles  <- 310
+nfiles  <- 350
+max_paticles <- 11760
 
 readDataOutput <- function(dirpath){
   dir.create(paste0(dirpath, 'trajectories/'), showWarnings = F)
@@ -31,9 +32,11 @@ readDataOutput <- function(dirpath){
   # removefiles <- list.files(path = dirpath, pattern = paste0('output','.*\\.dat'), full.names = T, recursive = T)
   # file.remove(removefiles)
   
-  df <- NULL
+  df <- array(dim = c(max_paticles * nfiles, 13)); df <- as.data.frame(df)
+  df_up <- seq(from = 1, by = max_paticles, length.out = nfiles)
+  df_do <- seq(from = max_paticles, by = max_paticles, length.out = nfiles)
+
   # surviv <- NULL
-  edad_ini <- 1
   for(i in 1:nfiles){
     
     xscan <- scan(trajFiles[i], quiet = T)
@@ -43,38 +46,40 @@ readDataOutput <- function(dirpath){
     dat <- read.table(file = trajFiles[i], header = F, sep = '')
     dat$V1 <- dat$V1-360
     dat$day <- rep(i, times = dim(dat)[1])
-    dat$edad <- dat$V10
-    dat$edad[dat$edad == 0.5] <- 0
-    dat$edad <- dat$edad + i
     
-    if(i != 1){
-      dat$V10[dat$V10 == 0.5] <- NA
-      dat <- dat[complete.cases(dat), ]
-    }
     if(i == 1){
-      next()
+      edad <- numeric(length = max_paticles)
+      dat$edad <- edad
+    }else{
+      edad <- edad + 1
+      edad[dat$V10 == 0.5] <- 0
+      dat$edad <- edad
     }
-    
-    
+
     # sstdat <- read.table(file = sstFiles[i], header = F, sep = '')
     # Define new lon-lat values for new grid (by = indicates spatial resolution in degrees)
     x0 <- seq(from = -100, to = -70, by = 1/6)
     y0 <- seq(from = -40 , to = 15 , by = 1/6) 
-    # new_dat <- interp(x,y,z, xo = x0, yo = y0)
-    # newz <- new_dat[[3]]
 
-    if(i < 10) number <- paste0('00',i)
-    if(i >= 10 & i <=100) number <- paste0('0',i)
-    if(i > 100) number <- i
+    i_name <- i - 1
+    if(i_name < 10) number <- paste0('00',i_name)
+    if(i_name >= 10 & i_name <=100) number <- paste0('0',i_name)
+    if(i_name > 100) number <- i_name
     
-    PNG1 <- paste0(dirpath,'trajectories/', '/AllTrajectories',number ,'.png')
+    dat2 <- dat
+    df[df_up[i]:df_do[i], ] <- dat2[,1:13]
+    print(trajFiles[i])
+    
+    dat <- subset(dat, dat$V10 == 1)
+    
+    PNG1 <- paste0(dirpath,'trajectories/', '/Particles',number ,'.png')
     # #---------- PLOT WITH GGPLOT2 ----------#
     # graph <- ggplot(data = dat) +
     #   geom_point(data = dat, aes(x = V1, y = V2), color = 'black',size = .2) +
     #   borders(fill='grey',colour='grey') +
     #   labs(x = 'Longitude (W)', y = 'Latitude (S)') +
     #   coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +
-    #   geom_text(x = -98, y = -29, label = paste('Day', i), size=10, hjust=0, vjust=0) +
+    #   geom_text(x = -98, y = -29, label = paste('Day', (i-1)), size=10, hjust=0, vjust=0) +
     #   theme(axis.text.x  = element_text(face='bold', color='black',
     #                                     size=15, angle=0),
     #         axis.text.y  = element_text(face='bold', color='black',
@@ -97,13 +102,13 @@ readDataOutput <- function(dirpath){
     axis(side = 2, at = seq(ylimmap[1], ylimmap[2], 5), labels = seq(ylimmap[1], ylimmap[2], 5),
          lwd = 2, lwd.ticks = 2, font.axis=4, las = 2)
     points(x = dat[,1], y = dat[,2], pch = 19, cex = .2, col = 'red')
-    mtext(text = paste('Day', i), side = 3, adj = 0.05, line = -1, font = 2)
+    mtext(text = paste('Day', (i-1)), side = 3, adj = 0.05, line = -1, font = 2)
     mtext(text = paste('# Drifter:', dim(dat)[1]), side = 3, adj = 0.05, line = -3, font = 2)
     grid()
     dev.off()
     
     # #---------- PLOT WITH R BASE + SST MAP----------#
-    # PNGsst <- paste0(dirpath,'trajectories/', '/AllTrajectoriesSST',number ,'.png')
+    # PNGsst <- paste0(dirpath,'trajectories/', '/ParticlesSST',number ,'.png')
     # png(file = PNGsst, height = 650, width = 650)
     # par(mar = c(1,2,1,2), oma = c(2,1,.5,.5))
     # image.plot(x0, y0, sstdat, ylim = ylimmap, xlim = xlimmap, zlim = c(10,30), axes = F, xlab ='', ylab = '')
@@ -114,7 +119,7 @@ readDataOutput <- function(dirpath){
     # axis(side = 2, at = seq(ylimmap[1], ylimmap[2], 5), labels = seq(ylimmap[1], ylimmap[2], 5),
     #      lwd = 2, lwd.ticks = 2, font.axis=4, las = 2)
     # points(x = dat[,1], y = dat[,2], pch = 19, cex = .2, col = 'black')
-    # mtext(text = paste('Day', i), side = 3, adj = 0.05, line = -1, font = 2)
+    # mtext(text = paste('Day', (i-1)), side = 3, adj = 0.05, line = -1, font = 2)
     # mtext(text = paste('# Drifter:', dim(dat)[1]), side = 3, adj = 0.05, line = -3, font = 2)
     # grid()
     # dev.off()
@@ -123,11 +128,8 @@ readDataOutput <- function(dirpath){
     # survivor <- sum(dat$knob >= error_bar(x = dat$knob)[1]) * 100 / ini_particles
     # surviv <- c(surviv, survivor)
     
-    df <- rbind(df, dat)
-    print(trajFiles[i])
+    
   }
-  colnames(df) <- c('lon','lat','exSST','exPY','exSZ','exMZ','knob','Wweight','PA','TGL','drifter','day')
-  
   #--------- Calculo retenidos en la costa ---------#
    # lon <- as.matrix(read.table(paste0(input_path, 'lon_grid.csv'), header = F))
    # lat <- as.matrix(read.table(paste0(input_path, 'lat_grid.csv'), header = F))
@@ -149,10 +151,11 @@ readDataOutput <- function(dirpath){
   # png(filename = paste0(dirpath, 'L-Lc.png'), height = 850, width = 850)
   # plot(surviv, type = 'l', xlab = 'Days of simulation', ylab = '%(L > Lc)', ylim = c(0,100))
   # dev.off()
+  colnames(df) <- c('lon','lat','exSST','exPY','exSZ','exMZ','knob','Wweight','PA','TGL','drifter','day','edad')
   return(df)
 }
 df <- readDataOutput(dirpath = dirpath)
-
+df <- subset(df, df$TGL == 1)
 
 # VB - (Marzloff et all 2009)
 Linf <- 20.5
@@ -168,9 +171,19 @@ L0   <- Linf * (1 - exp(-k*(t_serie-t0)))
 per40 <- L0[365]
 per40 <- per40 - (per40 * 40)/100 # Regla del 40%
 
+# # ANALISIS SEGUN EDAD #
+# edad_final <- nfiles - 30
+# lastEdad <- subset(x = df, df$edad == edad_final)
+# histEdadAlive <- subset(x = lastEdad, lastEdad$knob > per40)
+# aliveIndexEdad <- levels(factor(histEdadAlive$drifter))
+# aliveEdad <- subset(df, df$drifter %in% aliveIndexEdad)
+# # edad_knob <- tapply(, index, function)
+
+
+
 #-------- TALLAS FINALES ----------#
-lastDay <- subset(x = df, df$day == max(as.numeric(levels(factor(df$day)))))
-# err_bar <- error_bar(lastDay$knob)
+# lastDay <- subset(x = df, df$day == max(as.numeric(levels(factor(df$day)))))
+lastDay <- subset(x = df, df$edad == 310)
 histAlive <- subset(x = lastDay, lastDay$knob > per40)
 
 aliveIndex <- levels(factor(histAlive$drifter))
@@ -290,7 +303,7 @@ dev.off()
 png(paste0(dirpath, '/figures/histAlive.png'), width = 650, height = 650)
 par(lwd = 2, mar = c(3.5,4,2,1))
 b = hist(x = histAlive$knob, breaks = histxlim, axes = F, xlab = '', main = '', ylab = '', lwd = 2, ylim = histylim)
-b = (100 * sum(b$counts)/4000)
+b = (100 * sum(b$counts)/max_paticles)
 mtext(side = 1, line = 2, font = 2, text = 'knob')
 mtext(side = 2, line = 3, font = 2, text = 'Frequency')
 mtext(side = 3, line = 0, font = 2, text = 'Alive Particles')
@@ -309,14 +322,14 @@ for(i in 2:length(levels(factor(alive$day)))){
   if(i >= 10 & i <=100) number <- paste0('0',i)
   if(i > 100) number <- i
   
-  PNG2 <- paste0(dirpath,'trajectories/', '/AliveTrajectories', number,'.png')
+  PNG2 <- paste0(dirpath,'trajectories/', '/ParticlesAlive', number,'.png')
   # #---------- PLOT WITH GGPLOT2 ----------#
   # graph <- ggplot(data = df2) +
   #   geom_point(data = df2, aes(x = lon, y = lat), color = 'black',size = .2) +
   #   borders(fill='grey',colour='grey') +
   #   labs(x = 'Longitude (W)', y = 'Latitude (S)') +
   #   coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +
-  #   geom_text(x = -98, y = -29, label = paste('Day', i), size=10, hjust=0, vjust=0) +
+  #   geom_text(x = -98, y = -29, label = paste('Day', (i-1)), size=10, hjust=0, vjust=0) +
   #   theme(axis.text.x  = element_text(face='bold', color='black',
   #                                     size=15, angle=0),
   #         axis.text.y  = element_text(face='bold', color='black',
@@ -338,10 +351,10 @@ for(i in 2:length(levels(factor(alive$day)))){
   axis(side = 2, at = seq(ylimmap[1], ylimmap[2], 5), labels = seq(ylimmap[1], ylimmap[2], 5),
        lwd = 2, lwd.ticks = 2, font.axis=4, las = 2)
   points(x = df2[,1], y = df2[,2], pch = 19, cex = .2, col = 'red')
-  mtext(text = paste('Day', i), side = 3, adj = 0.05, line = -1, font = 2)
+  mtext(text = paste('Day', (i-1)), side = 3, adj = 0.05, line = -1, font = 2)
   grid()
   dev.off()
-  print(PNG2)
+  # print(PNG2)
 }
 
 #--------  PLOT TRAJECTORIES --------#
