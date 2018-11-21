@@ -13,7 +13,7 @@ library(raster)
 library(mgcv)
 
 # setwd("~/Documents/case4")
-dirpath <- 'C:/Users/ASUS/Desktop/source_out_ok/out/'
+dirpath <- '/home/jtam/Documents/case4/escenario/out/'
 # input_path <- 'F:/'
 xlimmap <- c(-100, -70)    # X limits of plot
 ylimmap <- c(-30, -0)      # Y limits of plot
@@ -21,7 +21,7 @@ ylimmap <- c(-30, -0)      # Y limits of plot
 # xlimmap <- c(-85, -70)    # X limits of plot
 # ylimmap <- c(-19, -4.95)      # Y limits of plot
 
-nfiles  <- 350
+nfiles  <- 360
 max_paticles <- 11760
 
 readDataOutput <- function(dirpath){
@@ -35,7 +35,7 @@ readDataOutput <- function(dirpath){
   df <- array(dim = c(max_paticles * nfiles, 13)); df <- as.data.frame(df)
   df_up <- seq(from = 1, by = max_paticles, length.out = nfiles)
   df_do <- seq(from = max_paticles, by = max_paticles, length.out = nfiles)
-
+  
   # surviv <- NULL
   for(i in 1:nfiles){
     
@@ -55,12 +55,12 @@ readDataOutput <- function(dirpath){
       edad[dat$V10 == 0.5] <- 0
       dat$edad <- edad
     }
-
+    
     # sstdat <- read.table(file = sstFiles[i], header = F, sep = '')
     # Define new lon-lat values for new grid (by = indicates spatial resolution in degrees)
     x0 <- seq(from = -100, to = -70, by = 1/6)
     y0 <- seq(from = -40 , to = 15 , by = 1/6) 
-
+    
     i_name <- i - 1
     if(i_name < 10) number <- paste0('00',i_name)
     if(i_name >= 10 & i_name <=100) number <- paste0('0',i_name)
@@ -131,23 +131,23 @@ readDataOutput <- function(dirpath){
     
   }
   #--------- Calculo retenidos en la costa ---------#
-   # lon <- as.matrix(read.table(paste0(input_path, 'lon_grid.csv'), header = F))
-   # lat <- as.matrix(read.table(paste0(input_path, 'lat_grid.csv'), header = F))
-   # coast <- as.matrix(read.table(paste0(input_path, 'CoastLineIndex.csv'), header = F))
-   # 
-   # xyz <- cbind(as.vector(lon), as.vector(lat), as.vector(coast))
-   # r <- rasterFromXYZ(xyz = xyz)
-   # SP <- rasterToPolygons(clump(r==1), dissolve=TRUE)
-   # k <- SP@polygons[[1]]@Polygons[[1]]@coords
-   # 
-   # lonlat <- as.matrix(dat[,1:2])
-   # coastalReteinedIndex <- which(in.out(bnd = k, x = lonlat) == T)
-   # coastalReteinedIndex <- subset(dat, dat$drifter %in% coastalReteinedIndex)
-   # coastalReteinedIndex <- coastalReteinedIndex$drifter
-   # 
-   # assign('coastalReteinedIndex',coastalReteinedIndex,.GlobalEnv)
+  # lon <- as.matrix(read.table(paste0(input_path, 'lon_grid.csv'), header = F))
+  # lat <- as.matrix(read.table(paste0(input_path, 'lat_grid.csv'), header = F))
+  # coast <- as.matrix(read.table(paste0(input_path, 'CoastLineIndex.csv'), header = F))
+  # 
+  # xyz <- cbind(as.vector(lon), as.vector(lat), as.vector(coast))
+  # r <- rasterFromXYZ(xyz = xyz)
+  # SP <- rasterToPolygons(clump(r==1), dissolve=TRUE)
+  # k <- SP@polygons[[1]]@Polygons[[1]]@coords
+  # 
+  # lonlat <- as.matrix(dat[,1:2])
+  # coastalReteinedIndex <- which(in.out(bnd = k, x = lonlat) == T)
+  # coastalReteinedIndex <- subset(dat, dat$drifter %in% coastalReteinedIndex)
+  # coastalReteinedIndex <- coastalReteinedIndex$drifter
+  # 
+  # assign('coastalReteinedIndex',coastalReteinedIndex,.GlobalEnv)
   #--------- Fin de calculo retenidos en la costa ---------#
-
+  
   # png(filename = paste0(dirpath, 'L-Lc.png'), height = 850, width = 850)
   # plot(surviv, type = 'l', xlab = 'Days of simulation', ylab = '%(L > Lc)', ylim = c(0,100))
   # dev.off()
@@ -182,8 +182,8 @@ per40 <- per40 - (per40 * 40)/100 # Regla del 40%
 
 
 #-------- TALLAS FINALES ----------#
-# lastDay <- subset(x = df, df$day == max(as.numeric(levels(factor(df$day)))))
-lastDay <- subset(x = df, df$edad == 310)
+lastDay <- subset(x = df, df$day == max(as.numeric(levels(factor(df$day)))))
+# lastDay <- subset(x = df, df$edad == 310)
 histAlive <- subset(x = lastDay, lastDay$knob > per40)
 
 aliveIndex <- levels(factor(histAlive$drifter))
@@ -447,12 +447,13 @@ print(PNG4); flush.console()
 #----PLOT DENSITY MAP - FINAL DAY - ALL PARTICLES ----#
 PNG6 <- paste0(dirpath, '/figures/densityMapAll.png')
 map <- ggplot(data = lastDay, aes(x = lon, y = lat))
-map <- map + geom_point(data = lastDay, aes(x = lon, y = lat),colour ="black",size = .001)+
-  
+map <- map +
+  # geom_point(data = lastDay, aes(x = lon, y = lat),colour ="black",size = .001)+
   geom_density2d(data = lastDay, aes(x = lon, y = lat), size = 0.05)+
   stat_density2d(data = lastDay, aes(x = lon, y = lat, fill = ..level.., alpha = ..level..), size = 0.01, geom = "polygon")+
-
-  scale_fill_gradient(low = "green", high = "red",expression(Density), limits = c(0,0.025))+
+  
+  # scale_fill_gradient(low = "green", high = "red",expression(Density), limits = c(0,0.025))+
+  scale_fill_gradient(expression(Density), limits = c(0,0.025))+
   # scale_colour_gradientn(colours = tim.colors(n = 64, alpha = 1), expression(Density), limits = c(0,1))+
   
   scale_alpha(range = c(0, 0.5), guide = FALSE)+
