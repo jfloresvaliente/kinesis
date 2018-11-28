@@ -41,7 +41,7 @@ readDataOutput <- function(dirpath, max_paticles = 5880, nfiles = 360){
     print(txtfiles[i])
   }
   colnames(df) <- c('lon','lat','exSST','exPY','exSZ','exMZ','knob','Wweight','PA','TGL','drifter','day','age')
-  return(df)
+  assign(x = 'df', value = df, envir = .GlobalEnv)
 }
 #=============================================================================#
 # END OF PROGRAM

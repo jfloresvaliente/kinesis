@@ -3,7 +3,7 @@ library(fields)
 library(maps)
 library(mapdata)
 
-dirpath <- '/run/media/jtam/Seagate Expansion Drive/Manon/RCP8.5_2011_2100/Avg/'
+dirpath <- 'D:/Manon/RCP8.5_2011_2100/Avg/'
 nc_files <- list.files(path = dirpath, pattern = '.*\\.nc', recursive = T, full.names = T)
 
 nc <- nc_open(nc_files[1])
@@ -24,7 +24,7 @@ nc_close(nc)
 # lat[b]
 
 # vari_name <- c('temp','salt','O2','CACO3','NANO','ZOO','MESO','NCHL','DCHL','NO3','NH4')
-vari_name <- c('temp','salt','O2','CACO3','NANO','ZOO','MESO','NCHL','DCHL','NO3','NH4')
+vari_name <- 'DIA'
 
 year_in <- 2011
 year_on <- 2100
