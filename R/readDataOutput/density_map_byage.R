@@ -17,8 +17,8 @@ density_map_byage <- function(df, outpath, ages = c(1,360), range = c(0, 0.5),xl
       # geom_point(data = sub_df, aes(x = lon, y = lat),colour ='black',size = .001)+
       geom_density2d(data = sub_df, aes(x = lon, y = lat), size = 0.05)+
       stat_density2d(data = sub_df, aes(x = lon, y = lat, fill = ..level.., alpha = ..level..), size = 0.01, geom = 'polygon')+
-      scale_fill_gradient(low = 'blue', high = 'red',expression(Density), limits = c(0,0.05))+
-      scale_alpha(range = range, guide = FALSE)+
+      scale_fill_gradient(low = 'blue', high = 'red', expression(Density), limits = range)+
+      scale_alpha(range = c(0.5,0.5), guide = FALSE)+
       labs(x = 'Longitude (W)', y = 'Latitude (S)') +
       borders(fill='grey',colour='grey') +
       coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +

@@ -4,16 +4,20 @@ library(mapdata)
 library(raster)
 library(mgcv)
 
-source('R/readDataOutput/readDataOutput.R')
-source('R/readDataOutput/MapParticlesByDay.R')
-source('R/readDataOutput/MapParticlesByAge.R')
+# source('R/readDataOutput/readDataOutput.R')
+# source('R/readDataOutput/MapParticlesByDay.R')
+# source('R/readDataOutput/MapParticlesByAge.R')
 source('R/readDataOutput/density_map_byday.R')
 source('R/readDataOutput/density_map_byage.R')
 source('R/readDataOutput/VB_curve.R')
-source('R/readDataOutput/knob_weight_byage.R')
-source('R/readDataOutput/knob_weight_byday.R')
-source('R/readDataOutput/hist_knob_weight_byage.R')
-source('R/readDataOutput/hist_knob_weight_byday.R')
+# source('R/readDataOutput/knob_weight_byage.R')
+# source('R/readDataOutput/knob_weight_byday.R')
+# source('R/readDataOutput/hist_knob_weight_byage.R')
+# source('R/readDataOutput/hist_knob_weight_byday.R')
+source('R/readDataOutput/knob_map_byday.R')
+source('R/readDataOutput/knob_map_byage.R')
+source('R/readDataOutput/weight_map_byday.R')
+source('R/readDataOutput/weight_map_byage.R')
 
 
 dirpath <- 'C:/Users/ASUS/Desktop/out/'
@@ -135,10 +139,14 @@ outpathFigures <- paste0(dirpath, 'figures/')
 
 # MapParticlesByDay(df = df, outpath = outpathByDay)
 # MapParticlesByAge(df = df, outpath = outpathByAge)
-density_map_byday(df = df40, outpath = outpathFigures, days = c(1,50,100,200,300,360))
-density_map_byage(df = df40, outpath = outpathFigures, ages = c(1,50,100,200,300,360))
+# density_map_byday(df = df, outpath = outpathFigures, days = c(1,50,100,200,300,360), range = c(0,.075))
+# density_map_byage(df = df, outpath = outpathFigures, ages = c(1,50,100,200,300,360), range = c(0,.075))
 
+knob_map_byday(df = df, outpath = outpathFigures, days = c(1,50,100,200,300,360))
+knob_map_byage(df = df, outpath = outpathFigures, ages = c(1,50,100,200,300,360))
 
+weight_map_byday(df = df, outpath = outpathFigures, days = c(1,50,100,200,300,360), zlimmap = c(0,20))
+weight_map_byage(df = df, outpath = outpathFigures, ages = c(1,50,100,200,300,360), zlimmap = c(0,20))
 
 #=============================================================================#
 # END OF PROGRAM

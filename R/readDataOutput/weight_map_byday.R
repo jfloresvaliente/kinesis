@@ -1,24 +1,21 @@
 #=============================================================================#
-# Name   : density_map_byday
+# Name   : weight_map_byday
 # Author : Jorge Flores
 # Date   : 
 # Version:
 # Aim    : 
 # URL    : 
 #=============================================================================#
-density_map_byday <- function(df, outpath, days = c(1,360), range = c(0, 0.5),xlimmap = c(-100,-70), ylimmap = c(-30,0)){
-
+weight_map_byday <- function(df, outpath, days = c(1,360),xlimmap = c(-100,-70), ylimmap = c(-30,0), zlimmap = c(0,15)){
+  
   for(i in 1:length(days)){
     sub_df <- subset(df, df$day == days[i] & df$TGL == 1)
     
-    PNG <- paste0(outpath, 'densityMapDay', days[i],'.png')
+    PNG <- paste0(outpath, 'weightMapDay', days[i],'.png')
     map <- ggplot(data = sub_df, aes(x = lon, y = lat))
     map <- map +
-      # geom_point(data = sub_df, aes(x = lon, y = lat),colour ='black',size = .001)+
-      geom_density2d(data = sub_df, aes(x = lon, y = lat), size = 0.05)+
-      stat_density2d(data = sub_df, aes(x = lon, y = lat, fill = ..level.., alpha = ..level..), size = 0.01, geom = 'polygon')+
-      scale_fill_gradient(low = 'blue', high = 'red', expression(Density), limits = range)+
-      scale_alpha(range = c(0.5,0.5), guide = FALSE)+
+      geom_point(data = sub_df, aes(x = lon, y = lat, colour = Wweight), size = 1)+
+      scale_colour_gradientn(colours = tim.colors(64), limits = zlimmap)+
       labs(x = 'Longitude (W)', y = 'Latitude (S)') +
       borders(fill='grey',colour='grey') +
       coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +
