@@ -9,7 +9,6 @@
 density_map_byage <- function(df, outpath, ages = c(1,360), range = c(0, 0.5),xlimmap = c(-100,-70), ylimmap = c(-30,0)){
   
   for(i in 1:length(ages)){
-    # print(i)
     sub_df <- subset(df, df$age == ages[i] & df$TGL == 1)
     
     PNG <- paste0(outpath, 'densityMapAge', ages[i],'.png')

@@ -10,6 +10,7 @@ MapParticlesByDay <- function(df, outpath, xlimmap = c(-100,-70), ylimmap = c(-3
   library(maps)
   library(mapdata)
   
+  # df <- subset(df, df$TGL == 1)
   var_fact <- as.numeric(levels(factor(df$day)))
   
   for(i in 1:length(var_fact)){
@@ -34,7 +35,7 @@ MapParticlesByDay <- function(df, outpath, xlimmap = c(-100,-70), ylimmap = c(-3
            lwd = 2, lwd.ticks = 2, font.axis=4, las = 2)
       points(x = sub_df[,1], y = sub_df[,2], pch = 19, cex = .2, col = 'red')
       mtext(text = paste('Day', i_name), side = 3, adj = 0.05, line = -1, font = 2)
-      # mtext(text = paste('# Drifter:', dim(sub_df)[1]), side = 3, adj = 0.05, line = -3, font = 2)
+      # mtext(text = paste('# Drifters:', dim(sub_df)[1]), side = 3, adj = 0.05, line = -3, font = 2)
       grid()
       dev.off()
       print(PNG)
@@ -52,7 +53,7 @@ MapParticlesByDay <- function(df, outpath, xlimmap = c(-100,-70), ylimmap = c(-3
            lwd = 2, lwd.ticks = 2, font.axis=4, las = 2)
       points(x = sub_df[,1], y = sub_df[,2], pch = 19, cex = .2, col = 'red')
       mtext(text = paste('Day', i_name), side = 3, adj = 0.05, line = -1, font = 2)
-      mtext(text = paste('# Drifter:', dim(sub_df)[1]), side = 3, adj = 0.05, line = -3, font = 2)
+      mtext(text = paste('# Drifters:', dim(sub_df)[1]), side = 3, adj = 0.05, line = -3, font = 2)
       grid()
       dev.off()
       print(PNG)

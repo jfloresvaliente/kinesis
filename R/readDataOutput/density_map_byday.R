@@ -7,9 +7,8 @@
 # URL    : 
 #=============================================================================#
 density_map_byday <- function(df, outpath, days = c(1,360), range = c(0, 0.5),xlimmap = c(-100,-70), ylimmap = c(-30,0)){
-  
+
   for(i in 1:length(days)){
-    # print(i)
     sub_df <- subset(df, df$day == days[i] & df$TGL == 1)
     
     PNG <- paste0(outpath, 'densityMapDay', days[i],'.png')
