@@ -5,15 +5,18 @@ library(raster)
 library(mgcv)
 
 # source('R/readDataOutput/readDataOutput.R')
+source('R/readDataOutput/VB_curve.R')
+
 # source('R/readDataOutput/MapParticlesByDay.R')
 # source('R/readDataOutput/MapParticlesByAge.R')
-source('R/readDataOutput/density_map_byday.R')
-source('R/readDataOutput/density_map_byage.R')
-source('R/readDataOutput/VB_curve.R')
+# source('R/readDataOutput/density_map_byday.R')
+# source('R/readDataOutput/density_map_byage.R')
+
 # source('R/readDataOutput/knob_weight_byage.R')
 # source('R/readDataOutput/knob_weight_byday.R')
 # source('R/readDataOutput/hist_knob_weight_byage.R')
 # source('R/readDataOutput/hist_knob_weight_byday.R')
+
 source('R/readDataOutput/knob_map_byday.R')
 source('R/readDataOutput/knob_map_byage.R')
 source('R/readDataOutput/weight_map_byday.R')
@@ -142,22 +145,10 @@ outpathFigures <- paste0(dirpath, 'figures/')
 # density_map_byday(df = df, outpath = outpathFigures, days = c(1,50,100,200,300,360), range = c(0,.075))
 # density_map_byage(df = df, outpath = outpathFigures, ages = c(1,50,100,200,300,360), range = c(0,.075))
 
-knob_map_byday(df = df, outpath = outpathFigures, days = c(1,50,100,200,300,360))
-knob_map_byage(df = df, outpath = outpathFigures, ages = c(1,50,100,200,300,360))
-
-weight_map_byday(df = df, outpath = outpathFigures, days = c(1,50,100,200,300,360), zlimmap = c(0,20))
-weight_map_byage(df = df, outpath = outpathFigures, ages = c(1,50,100,200,300,360), zlimmap = c(0,20))
-
+knob_map_byday(df = df, outpath = outpathFigures, days = c(1,360))
+knob_map_byage(df = df, outpath = outpathFigures, ages = c(1,360))
+weight_map_byday(df = df, outpath = outpathFigures, days = c(1,360), zlimmap = c(0,20))
+weight_map_byage(df = df, outpath = outpathFigures, ages = c(1,360), zlimmap = c(0,20))
 #=============================================================================#
 # END OF PROGRAM
 #=============================================================================#
-
-# # setwd("~/Documents/case4")
- 
-# # input_path <- 'F:/'
-# # xlimmap <- c(-100, -70)    # X limits of plot
-# # ylimmap <- c(-30, -0)      # Y limits of plot
-# 
-# # xlimmap <- c(-85, -70)    # X limits of plot
-# # ylimmap <- c(-19, -4.95)      # Y limits of plot
-# 

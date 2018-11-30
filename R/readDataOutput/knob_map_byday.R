@@ -15,20 +15,18 @@ knob_map_byday <- function(df, outpath, days = c(1,360),xlimmap = c(-100,-70), y
     map <- ggplot(data = sub_df, aes(x = lon, y = lat))
     map <- map +
       geom_point(data = sub_df, aes(x = lon, y = lat, colour = knob), size = 1)+
-      scale_colour_gradientn(colours = tim.colors(64), limits = zlimmap)+
+      scale_colour_gradientn(colours = tim.colors(64), limits = zlimmap, expression('Knob'))+
       labs(x = 'Longitude (W)', y = 'Latitude (S)') +
       borders(fill='grey',colour='grey') +
       coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +
-      theme(axis.text.x  = element_text(face='bold', color='black',
-                                        size=15, angle=0),
-            axis.text.y  = element_text(face='bold', color='black',
-                                        size=15, angle=0),
-            axis.title.x = element_text(face='bold', color='black',
-                                        size=15, angle=0),
-            axis.title.y = element_text(face='bold', color='black',
-                                        size=15, angle=90),
+      theme(axis.text.x  = element_text(face='bold', color='black', size=15, angle=0),
+            axis.text.y  = element_text(face='bold', color='black', size=15, angle=0),
+            axis.title.x = element_text(face='bold', color='black', size=15, angle=0),
+            axis.title.y = element_text(face='bold', color='black', size=15, angle=90),
             legend.text  = element_text(size=15),
-            legend.title = element_text(size=15))
+            legend.title = element_text(size=15, face= 'bold'),
+            legend.position   = c(0.92, 0.9),
+            legend.background = element_rect(fill=adjustcolor( 'red', alpha.f = 0), size=0.5, linetype='solid'))
     if(!is.null(PNG)) ggsave(filename = PNG, width = 9, height = 9) else map
     print(PNG); flush.console()
   }
