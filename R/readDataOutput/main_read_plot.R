@@ -4,7 +4,7 @@ library(mapdata)
 library(raster)
 library(mgcv)
 
-# source('R/readDataOutput/readDataOutput.R')
+source('R/readDataOutput/readDataOutput.R')
 source('R/readDataOutput/VB_curve.R')
 
 # source('R/readDataOutput/MapParticlesByDay.R')
@@ -39,10 +39,13 @@ dir.create(path = paste0(dirpath, 'figures/'), showWarnings = F)
 
 VB_curve(day = final_age)
 
-# readDataOutput(dirpath = dirpath, max_paticles = max_paticles, nfiles = nfiles); dim(df)
+if(file.exists(x = paste0(dirpath, 'df.RData'))){
+  load(paste0(dirpath, 'df.RData'))
+}else{
+  readDataOutput(dirpath = dirpath, max_paticles = max_paticles, nfiles = nfiles); dim(df)
+  load(paste0(dirpath, 'df.RData'))
+}
 
-# save(df, file = paste0(dirpath, 'df.RData'))
-load(paste0(dirpath, 'df.RData'))
 
 # knob_weight_byday(df = df, Day = final_day)
 # knob_weight_byage(df = df, Age = final_age)
