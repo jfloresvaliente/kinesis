@@ -155,3 +155,13 @@ weight_map_byage(df = df, outpath = outpathFigures, ages = c(1,360), zlimmap = c
 #=============================================================================#
 # END OF PROGRAM
 #=============================================================================#
+
+# Calcular Pocentaje de Sobrevivientes
+percent <- subset(df, df$TGL == 1 & df$day == final_day)
+percent <- subset(percent, percent$knob >= VB40)$drifter
+percent <- (length(percent) * 100)/max_paticles
+
+# 318 puntos -6,-15 S; 80 km (6 pixeles ROMS)
+# 12 horas = 39.0356 %
+# 06 horas = 39.1142 %
+# FinCalcular Pocentaje de Sobrevivientes
