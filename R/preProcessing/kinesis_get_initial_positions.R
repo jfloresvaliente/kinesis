@@ -19,9 +19,9 @@ fileMask <- paste0(dirpath, 'mask_grid.csv')
 fileLon  <- paste0(dirpath, 'lon_grid.csv')
 fileLat  <- paste0(dirpath, 'lat_grid.csv')
 
-lon  <- as.matrix(read.table(file = fileLon, header = F, sep = ''))[,1]
-lat  <- as.matrix(read.table(file = fileLat, header = F, sep = ''))[1,]
-mask <- as.matrix(read.table(file = fileMask, header = F, sep = ''))
+lon  <- as.matrix(read.table(file = fileLon , header = F, sep = ';'))[,1]
+lat  <- as.matrix(read.table(file = fileLat , header = F, sep = ';'))[1,]
+mask <- as.matrix(read.table(file = fileMask, header = F, sep = ';'))
 
 a <- mask[-c(1:kmdist), ] # quito 6 filas de la parte superior
 b <- matrix (0 , kmdist , ncol(a)) # crea una matriz de ceros para suplir las faltantes
@@ -36,12 +36,12 @@ mask[ , c(1:ind2, ind1:dim(mask)[2])] <- NA
 
 # Para obtener una mascara y multiplicar luego
 name1 <- paste0(dirpath, 'CoastMask.csv')
-write.table(x = mask, file = name1, col.names = F, row.names = F)
+write.table(x = mask, file = name1, col.names = F, row.names = F, sep = ';')
 
 # Para obtener los X&Y de la mascara anterior
 index <- which(mask == 1, arr.ind = T)
 name2 <- paste0(dirpath, 'CoastMaskIndex.csv')
-write.table(x = index, file = name2, col.names = F, row.names = F)
+write.table(x = index, file = name2, col.names = F, row.names = F, sep = ';')
 
 # Para obtener lon-lat de la mascara anterior
 lon_vals <- lon[index[,1]]
