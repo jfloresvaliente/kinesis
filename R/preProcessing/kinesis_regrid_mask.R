@@ -1,5 +1,5 @@
 #=============================================================================#
-# Name   : kinesis_get_new_mask
+# Name   : kinesis_regrid_mask
 # Author : Jorge Flores - Jorge Tam
 # Date   : 15/06/2017
 # Version: V1
@@ -50,9 +50,9 @@ image.plot(lon, lat, mask, main = 'original mask', xlab = '', ylab = '')
 image.plot(newlon, newlat,newmask[[3]], main = 'pre-newmask', xlab = '', ylab = '')
 image.plot(newlon, newlat, newz0, main = 'new mask', xlab = '', ylab = '')
 
-write.table(newz0,  file = paste0(dirpath, 'mask_grid.csv'), row.names = F, col.names = F)
-write.table(newlon, file = paste0(dirpath, 'lon_grid.csv'), row.names = F, col.names = F)
-write.table(newlat, file = paste0(dirpath, 'lat_grid.csv'), row.names = F, col.names = F)
+write.table(newz0,  file = paste0(dirpath, 'mask_grid.csv'), row.names = F, col.names = F, sep = ';')
+write.table(newlon, file = paste0(dirpath, 'lon_grid.csv'), row.names = F, col.names = F, sep = ';')
+write.table(newlat, file = paste0(dirpath, 'lat_grid.csv'), row.names = F, col.names = F, sep = ';')
 #=============================================================================#
 # END OF PROGRAM
 #=============================================================================#
