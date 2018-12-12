@@ -12,34 +12,33 @@ library(mapdata)
 library(raster)
 library(mgcv)
 
-source('R/readDataOutput/readDataOutput.R')
-source('R/readDataOutput/VB_curve.R')
-
-source('R/readDataOutput/MapParticlesByDay.R')
-# source('R/readDataOutput/MapParticlesByAge.R')
-source('R/readDataOutput/density_map_byday.R')
-# source('R/readDataOutput/density_map_byage.R')
-
-# source('R/readDataOutput/knob_weight_byage.R')
-source('R/readDataOutput/knob_weight_byday.R')
-# source('R/readDataOutput/hist_knob_weight_byage.R')
-source('R/readDataOutput/hist_knob_weight_byday.R')
-
-source('R/readDataOutput/knob_map_byday.R')
-# source('R/readDataOutput/knob_map_byage.R')
-source('R/readDataOutput/weight_map_byday.R')
-# source('R/readDataOutput/weight_map_byage.R')
-
-
 dirpath <- '/home/jtam/Documents/case4/escenario/outM8/'
 nfiles  <- length(list.files(path = dirpath, pattern = paste0('output','.*\\.txt'), full.names = T, recursive = T))
 max_paticles <- 19080
-# final_age <- 330
+final_age <- 330
 final_day <- 330
 ylimknob   <- c(0,16)
 ylimweight <- c(0,16)
 
-# No cambiar nada desde aqui #
+#=============================================================================#
+# DO NOT CHANGE ANYTHING AFTER HERE 
+#=============================================================================#
+source('R/readDataOutput/readDataOutput.R')
+source('R/readDataOutput/VB_curve.R')
+
+source('R/readDataOutput/MapParticlesByDay.R')
+source('R/readDataOutput/density_map_byday.R')
+source('R/readDataOutput/knob_weight_byday.R')
+source('R/readDataOutput/hist_knob_weight_byday.R')
+source('R/readDataOutput/knob_map_byday.R')
+source('R/readDataOutput/weight_map_byday.R')
+
+source('R/readDataOutput/MapParticlesByAge.R')
+source('R/readDataOutput/density_map_byage.R')
+source('R/readDataOutput/knob_weight_byage.R')
+source('R/readDataOutput/hist_knob_weight_byage.R')
+source('R/readDataOutput/knob_map_byage.R')
+source('R/readDataOutput/weight_map_byage.R')
 
 dir.create(path = paste0(dirpath, 'particlesByDay/'), showWarnings = F)
 # dir.create(path = paste0(dirpath, 'particlesByAge/'), showWarnings = F)
@@ -48,16 +47,17 @@ dir.create(path = paste0(dirpath, 'figures/'), showWarnings = F)
 VB_curve(day = final_age)
 
 if(file.exists(x = paste0(dirpath, 'df.RData'))){
+  print('Reading RData ...')
   load(paste0(dirpath, 'df.RData'))
 }else{
+  print('Writing RData ...')
   readDataOutput(dirpath = dirpath, max_paticles = max_paticles, nfiles = nfiles); dim(df)
+  print('Reading RData ...')
   load(paste0(dirpath, 'df.RData'))
 }
 
-
 knob_weight_byday(df = df, Day = final_day)
-# knob_weight_byage(df = df, Age = final_age)
-
+knob_weight_byage(df = df, Age = final_age)
 
 #=============================================================================#
 # Plot Mean Growth (alive_byday) with Wweight
