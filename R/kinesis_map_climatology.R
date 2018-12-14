@@ -12,13 +12,19 @@ kinesis_map_climatology <- function(dirpath,
                                     xlim = c(-85,-70),
                                     ylim = c(-20,2),
                                     zlim = c(13,28),
-                                    year_in = 1995,
-                                    year_on = 1995){
+                                    year_in = 2001,
+                                    year_on = 2001){
   library(fields)
   library(maps)
   library(mapdata)
   
+  dir.create(path = paste0(dirpath, 'inputmaps/'), showWarnings = F)
   mon <- c('01','02','03','04','05','06','07','08','09','10','11','12')
+  
+  mask <- as.matrix(read.table(paste0(dirpath,'mask_grid.csv'), header = F, sep = ';'))
+  lon  <- as.matrix(read.table(paste0(dirpath,'lon_grid.csv'), header = F, sep = ';'))[,1]
+  lat  <- as.matrix(read.table(paste0(dirpath,'lat_grid.csv'), header = F, sep = ';'))[1,]
+  mask[mask==0] <- NA 
   
   array_mean_month <- NULL
   for(month in 1:length(mon)){
@@ -35,7 +41,7 @@ kinesis_map_climatology <- function(dirpath,
     for(i in 1:length(month_files)){
       print(month_files[i])
       dat <- read.table(month_files[i], header = F)
-      val <- dat[,3]
+      val <- dat[,3]*as.vector(mask)
       array_month <- cbind(array_month,val)
     }
     
@@ -43,13 +49,8 @@ kinesis_map_climatology <- function(dirpath,
     array_mean_month <- cbind(array_mean_month,mean_month)
   }
 
-  mask <- as.matrix(read.table(paste0(dirpath,'mask_grid.csv'), header = F))
-  lon  <- as.matrix(read.table(paste0(dirpath,'lon_grid.csv'), header = F))
-  lat  <- as.matrix(read.table(paste0(dirpath,'lat_grid.csv'), header = F))
-  mask[mask==0] <- NA
-  
   ## PLOT MAP AND SET COASTLINE
-  fig_name <- paste0(dirpath,'climatology_',year_in,'_',year_on,'_',var,'.png')
+  fig_name <- paste0(dirpath, 'inputmaps/','climatology_',year_in,'_',year_on,'_',var,'.png')
   png(fig_name, width = 1350,height = 950, res = 120)
   
   par(mfrow = c(3, 4),        # 2x2 layout
@@ -62,36 +63,36 @@ kinesis_map_climatology <- function(dirpath,
   for(j in 1:12){
     valgrid <- matrix(array_mean_month[,j], nrow = dim(mask)[1], ncol = dim(mask)[2], byrow = F)
     
-    valgrid[valgrid == zlim[2]] = zlim[2] - 0.001
-    valgrid[valgrid >  zlim[2]] = zlim[2]
-    valgrid[valgrid == zlim[1]] = zlim[1] + 0.001
-    valgrid[valgrid <  zlim[1]] = zlim[1]
+    valgrid[valgrid == zlim[2]] <- zlim[2] - 0.001
+    valgrid[valgrid >  zlim[2]] <- zlim[2]
+    valgrid[valgrid == zlim[1]] <- zlim[1] + 0.001
+    valgrid[valgrid <  zlim[1]] <- zlim[1]
     
-    image.plot(lon,lat,valgrid*mask, zlim = zlim, ylim = ylim, xlim = xlim,
+    image.plot(lon,lat,valgrid, zlim = zlim, ylim = ylim, xlim = xlim,
                xlab='',ylab='', axes = F)
     map('worldHires',add=T,fill=T,col='gray')
-    legend('bottomleft', legend = paste('Month',j), adj = .2)
+    legend('bottomleft', legend = paste('Month',j), adj = .2, text.font = 2)
     box(lwd = 2)
     if(j == 1 | j == 5 | j == 9) axis(2, las = 2, lwd = 2, font = 2)
     if(j == 9 | j == 10 | j== 11 | j == 12) axis(1, lwd = 2, font = 2)
   }
   dev.off()
-  print(paste('Climatological image save in ...', dirpath))
+  print(paste0('Climatological image save in ...', dirpath, 'inputmaps/'))
 }
 #=============================================================================#
 # END OF FUNCTION
 #=============================================================================#
-
-dirpath <- 'G:/hacer_hoy/KINESIS_ORIGINAL_SOURCE/anchovy/input/interanual/zlev10/'
-vars <- c('t','c','u','v')
+dirpath <- '/home/jtam/Documents/case4/escenario_t4/input/'
+vars <- c('t','c','m','z','u','v')
 for(i in 1:length(vars)){
-  years <- 1995:1999
+  years <- 2001:2001
   for(j in years){
-    zlim <- c(13,28,0,15,-0.25,0.25,-0.25,0.25)
-    zlim <- matrix(data = zlim, nrow = 4, ncol = 2, byrow = T)
+    zlim <- c(15,35, 0,11, 0,5, 0,3, -0.25,0.25, -0.25,0.25)
+    zlim <- matrix(data = zlim, nrow = 6, ncol = 2, byrow = T)
     kinesis_map_climatology(dirpath, var = vars[i], zlim = zlim[i,], year_in = j, year_on = j) 
   }
 }
+rm(list = ls())
 #=============================================================================#
 # END OF PROGRAM
 #=============================================================================#
