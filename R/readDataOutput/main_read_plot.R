@@ -12,9 +12,9 @@ library(mapdata)
 library(raster)
 library(mgcv)
 
-dirpath <- 'F:/COLLABORATORS/KINESIS/OUT/out6H_49POINTS/'
+dirpath <- '/run/media/jtam/JORGE_OLD/kinesis_escenarios_outputs/escenario_t4/outM3/'
 nfiles  <- length(list.files(path = dirpath, pattern = paste0('output','.*\\.txt'), full.names = T, recursive = T))
-max_paticles <- 5880
+max_paticles <- 19080
 final_age <- 360
 final_day <- 360
 ylimknob   <- c(0,16)
@@ -63,9 +63,27 @@ if(file.exists(x = paste0(dirpath, 'df.RData'))){
   load(paste0(dirpath, 'df.RData'))
 }
 
+#=============================================================================#
+# PLOT MAPS
+#=============================================================================#
+outpathByDay <- paste0(dirpath, 'particlesByDay/')
+outpathByAge <- paste0(dirpath, 'particlesByAge/')
+outpathFigures <- paste0(dirpath, 'figures/')
+
+density_map_byday(df = df, outpath = outpathFigures, days = c(final_day), range = c(0,.075))
+knob_map_byday(df = df, outpath = outpathFigures, days = c(final_day))
+weight_map_byday(df = df, outpath = outpathFigures, days = c(final_day), zlimmap = c(0,20))
+
+density_map_byage(df = df, outpath = outpathFigures, ages = c(final_age), range = c(0,.075))
+knob_map_byage(df = df, outpath = outpathFigures, ages = c(final_age))
+weight_map_byage(df = df, outpath = outpathFigures, ages = c(final_age), zlimmap = c(0,20))
+
+if(length(list.files(outpathByDay)) != nfiles) MapParticlesByDay(df = df, outpath = outpathByDay)
+if(length(list.files(outpathByAge)) != nfiles) MapParticlesByAge(df = df, outpath = outpathByAge)
+
+
 knob_weight_byday(df = df, Day = final_day)
 knob_weight_byage(df = df, Age = final_age)
-
 #=============================================================================#
 # Plot Mean Growth (alive_byday) with Wweight
 #=============================================================================#
@@ -149,25 +167,6 @@ mtext(side = 2, line = 3, font = 2, cex = 1.5, text = 'Relative Frequecy (%)')
 mtext(side = 3, line =-2, font = 2, cex = 1.5, text = paste('Age:', final_age, 'days'), adj = 0.1)
 box(lwd = 2)
 dev.off()
-
-#=============================================================================#
-# PLOT MAPS
-#=============================================================================#
-
-outpathByDay <- paste0(dirpath, 'particlesByDay/')
-outpathByAge <- paste0(dirpath, 'particlesByAge/')
-outpathFigures <- paste0(dirpath, 'figures/')
-
-density_map_byday(df = df, outpath = outpathFigures, days = c(1,50,100,200,300), range = c(0,.075))
-knob_map_byday(df = df, outpath = outpathFigures, days = c(1,330))
-weight_map_byday(df = df, outpath = outpathFigures, days = c(1,330), zlimmap = c(0,20))
-
-density_map_byage(df = df, outpath = outpathFigures, ages = c(1,50,100,200,300,360), range = c(0,.075))
-knob_map_byage(df = df, outpath = outpathFigures, ages = c(1,360))
-weight_map_byage(df = df, outpath = outpathFigures, ages = c(1,360), zlimmap = c(0,20))
-
-if(length(list.files(outpathByDay)) != nfiles) MapParticlesByDay(df = df, outpath = outpathByDay)
-if(length(list.files(outpathByAge)) != nfiles) MapParticlesByAge(df = df, outpath = outpathByAge)
 #=============================================================================#
 # END OF PROGRAM
 #=============================================================================#
