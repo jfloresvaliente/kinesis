@@ -54,7 +54,7 @@ VB_curve(day = final_age)
 
 #=== READING DATA ===#
 if(file.exists(x = paste0(dirpath, 'df.RData'))){
-  print('Reading "RData" ...')
+  print('Reading RData ...')
   load(paste0(dirpath, 'df.RData'))
 }else{
   print('Reading ".txt" data ...')
