@@ -2,7 +2,7 @@ close all
 clear all
 
 % Ruta del directorio donde se ubican los inputs
-path = 'D:/ROMS_SIMULATIONS/ROMS6B_VINCENT_SIMULATION/climatologyM/zlev10/m_2/';
+path = 'D:/ROMS_SIMULATIONS/ROMS6B_VINCENT_SIMULATION/climatologyM/zlev10/z_2/';
 files = dir ([path '*.txt']);
 
 for i = 1: size(files,1)

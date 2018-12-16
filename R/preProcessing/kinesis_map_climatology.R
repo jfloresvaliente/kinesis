@@ -82,13 +82,13 @@ kinesis_map_climatology <- function(dirpath,
 #=============================================================================#
 # END OF FUNCTION
 #=============================================================================#
-dirpath <- '/home/jtam/Documents/case4/escenario_t4/input/'
-vars <- c('t','c','m','z','u','v')
+dirpath <- 'D:/kinesis_escenarios_outputs/escenario_t4c0.5m0.5/input/'
+vars <- c('t','c','m','z')
 for(i in 1:length(vars)){
   years <- 2001:2001
   for(j in years){
-    zlim <- c(15,35, 0,11, 0,5, 0,3, -0.25,0.25, -0.25,0.25)
-    zlim <- matrix(data = zlim, nrow = 6, ncol = 2, byrow = T)
+    zlim <- c(15,35, 0,11, 0,5, 0,3)
+    zlim <- matrix(data = zlim, nrow = 4, ncol = 2, byrow = T)
     kinesis_map_climatology(dirpath, var = vars[i], zlim = zlim[i,], year_in = j, year_on = j) 
   }
 }

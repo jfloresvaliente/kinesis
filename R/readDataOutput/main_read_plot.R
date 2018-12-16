@@ -12,7 +12,7 @@ library(mapdata)
 library(raster)
 library(mgcv)
 
-dirpath <- '/run/media/jtam/JORGE_OLD/kinesis_escenarios_outputs/escenario_t4/outM3/'
+dirpath <- 'D:/kinesis_escenarios_outputs/escenario_c2/outM1/'
 nfiles  <- length(list.files(path = dirpath, pattern = paste0('output','.*\\.txt'), full.names = T, recursive = T))
 max_paticles <- 19080
 final_age <- 360
@@ -57,7 +57,7 @@ if(file.exists(x = paste0(dirpath, 'df.RData'))){
   print('Reading RData ...')
   load(paste0(dirpath, 'df.RData'))
 }else{
-  print('Reading ".txt" data ...')
+  print('Reading .txt data ...')
   readDataOutput(dirpath = dirpath, max_paticles = max_paticles, nfiles = nfiles); dim(df)
   print('Writing RData ...')
   load(paste0(dirpath, 'df.RData'))
