@@ -20,7 +20,7 @@ for(i in 1:12){
 }
 
 ylabs <- seq(0,40,5)
-png(filename = paste0(dirpath, 'barplot_survival.png'), width = 650, height = 650, res = 120)
+png(filename = paste0(dirpath, 'barplot_survival.png'), width = 750, height = 650, res = 120)
 par(lwd = 2)
 graph <- barplot(survival_dat, axes = F, ylim = c(0,40))
 axis(side = 1, font = 2, lwd.ticks = 2, lwd = 2, at = graph, labels = 1:12)
