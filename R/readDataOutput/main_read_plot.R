@@ -63,13 +63,15 @@ if(file.exists(x = paste0(dirpath, 'df.RData'))){
   load(paste0(dirpath, 'df.RData'))
 }
 
-#=============================================================================#
-# PLOT MAPS
-#=============================================================================#
+
+#=== Crear 'PATHS' para guardar figuras ===#
 outpathByDay <- paste0(dirpath, 'particlesByDay/')
 outpathByAge <- paste0(dirpath, 'particlesByAge/')
 outpathFigures <- paste0(dirpath, 'figures/')
 
+#=============================================================================#
+# PLOT MAPS
+#=============================================================================#
 density_map_byday(df = df, outpath = outpathFigures, days = c(final_day), range = c(0,.075))
 knob_map_byday(df = df, outpath = outpathFigures, days = c(final_day))
 weight_map_byday(df = df, outpath = outpathFigures, days = c(final_day), zlimmap = c(0,20))
@@ -80,7 +82,6 @@ weight_map_byage(df = df, outpath = outpathFigures, ages = c(final_age), zlimmap
 
 if(length(list.files(outpathByDay)) != nfiles) MapParticlesByDay(df = df, outpath = outpathByDay)
 if(length(list.files(outpathByAge)) != nfiles) MapParticlesByAge(df = df, outpath = outpathByAge)
-
 
 knob_weight_byday(df = df, Day = final_day)
 knob_weight_byage(df = df, Age = final_age)
@@ -172,7 +173,7 @@ dev.off()
 #=============================================================================#
 
 # Calcular Pocentaje de Sobrevivientes
-percent <- subset(df, df$TGL == 1 & df$day == final_day)
+percent <- subset(df, df$TGL == 1 & df$age == final_age)
 percent <- subset(percent, percent$knob >= VB40)$drifter
 percent <- (length(percent) * 100)/max_paticles
 write.table(x = percent, file = paste0(dirpath, 'survivePercent.txt'), col.names = F, row.names = F)

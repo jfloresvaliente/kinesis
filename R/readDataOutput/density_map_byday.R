@@ -34,7 +34,6 @@ density_map_byday <- function(df, outpath, days = c(1,360), range = c(0, 0.5),xl
                                         size=15, angle=90),
             legend.text  = element_text(size=15),
             legend.title = element_text(size=15))
-    x11();map
     if(!is.null(PNG)) ggsave(filename = PNG, width = 9, height = 9) else map
     print(PNG); flush.console()
   }

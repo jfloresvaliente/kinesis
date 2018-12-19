@@ -15,10 +15,12 @@ density_map_byage <- function(df, outpath, ages = c(1,360), range = c(0, 0.5),xl
     map <- ggplot(data = sub_df, aes(x = lon, y = lat))
     map <- map +
       # geom_point(data = sub_df, aes(x = lon, y = lat),colour ='black',size = .001)+
-      geom_density2d(data = sub_df, aes(x = lon, y = lat), size = 0.05)+
-      stat_density2d(data = sub_df, aes(x = lon, y = lat, fill = ..level.., alpha = ..level..), size = 0.01, geom = 'polygon')+
+      # geom_density2d(data = sub_df, aes(x = lon, y = lat), size = 0.05)+
+      # stat_density2d(data = sub_df, aes(x = lon, y = lat, fill = ..level.., alpha = ..level..), size = 0.01, geom = 'polygon')+
+      stat_density2d(data = sub_df, aes(x = lon, y = lat, fill = ..level.., alpha = ..level..), size = 0.01, geom = 'polygon',binwidth = 0.01)+
       scale_fill_gradient(low = 'blue', high = 'red', expression(Density), limits = range)+
-      scale_alpha(range = c(0.5,0.5), guide = FALSE)+
+      # scale_alpha(range = c(0.5,0.5), guide = FALSE)+
+      scale_alpha(guide = F) +
       labs(x = 'Longitude (W)', y = 'Latitude (S)') +
       borders(fill='grey',colour='grey') +
       coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +
