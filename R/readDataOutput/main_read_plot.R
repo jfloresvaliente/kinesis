@@ -12,7 +12,7 @@ library(mapdata)
 library(raster)
 library(mgcv)
 
-dirpath <- 'D:/kinesis_escenarios_outputs/escenario_t4_m2/outM8/'
+dirpath <- 'D:/kinesis_escenarios_outputs/escenario/outM2/'
 nfiles  <- length(list.files(path = dirpath, pattern = paste0('output','.*\\.txt'), full.names = T, recursive = T))
 max_paticles <- 9540
 final_age <- 360
