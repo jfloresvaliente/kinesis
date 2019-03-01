@@ -12,7 +12,7 @@ library(mapdata)
 library(raster)
 library(mgcv)
 
-dirpath <- 'D:/kinesis_escenarios_outputs/escenario/outM2/'
+dirpath <- '/home/jtam/Documents/kinesis_escenarios_outputs/escenario/out/'
 nfiles  <- length(list.files(path = dirpath, pattern = paste0('output','.*\\.txt'), full.names = T, recursive = T))
 max_paticles <- 9540
 final_age <- 360
@@ -44,9 +44,10 @@ source('R/readDataOutput/hist_knob_weight_byage.R')
 source('R/readDataOutput/knob_map_byage.R')
 source('R/readDataOutput/weight_map_byage.R')
 source('R/readDataOutput/knob_map_byage_alive.R')
+source('R/readDataOutput/dens2D_map_byage.R')
 
 
-source('F:/GitHub/kinesis/R/readDataOutput/timeserie_vari.R')
+source('R/readDataOutput/timeserie_vari.R')
 #=== Crear directorios para guardar figuras ===#
 dir.create(path = paste0(dirpath, 'particlesByDay/'), showWarnings = F)
 dir.create(path = paste0(dirpath, 'particlesByAge/'), showWarnings = F)
@@ -79,16 +80,16 @@ outpathFigures <- paste0(dirpath, 'figures/')
 # weight_map_byday(df = df, outpath = outpathFigures, days = c(final_day), zlimmap = c(0,20))
 # 
 # density_map_byage(df = df, outpath = outpathFigures, ages = c(final_age), range = c(0,.075))
-knob_map_byage(df = df, outpath = outpathFigures, ages = c(final_age), zlimmap = ylimknob)
+# knob_map_byage(df = df, outpath = outpathFigures, ages = c(final_age), zlimmap = ylimknob)
 # weight_map_byage(df = df, outpath = outpathFigures, ages = c(final_age), zlimmap = c(0,20))
-
+# 
 # if(length(list.files(outpathByDay)) != nfiles) MapParticlesByDay(df = df, outpath = outpathByDay)
 # if(length(list.files(outpathByAge)) != nfiles) MapParticlesByAge(df = df, outpath = outpathByAge)
-
+# 
 # knob_weight_byday(df = df, Day = final_day)
 # knob_weight_byage(df = df, Age = final_age)
-knob_map_byage_alive(df = df, outpath = outpathFigures, ages = 360, VB = VB40, zlimmap = ylimknob)
-
+# knob_map_byage_alive(df = df, outpath = outpathFigures, ages = 360, VB = VB40, zlimmap = ylimknob)
+# 
 # #=============================================================================#
 # # Plot Mean Growth (alive_byday) with Wweight
 # #=============================================================================#
@@ -177,15 +178,15 @@ knob_map_byage_alive(df = df, outpath = outpathFigures, ages = 360, VB = VB40, z
 # #=============================================================================#
 # 
 # # Calcular Pocentaje de Sobrevivientes
-# percent <- subset(df, df$TGL == 1 & df$age == final_age)
-# percent <- subset(percent, percent$knob >= VB40)$drifter
-# percent <- (length(percent) * 100)/max_paticles
-# write.table(x = percent, file = paste0(dirpath, 'survivePercent.txt'), col.names = F, row.names = F)
+# # percent <- subset(df, df$TGL == 1 & df$age == final_age)
+# # percent <- subset(percent, percent$knob >= VB40)$drifter
+# # percent <- (length(percent) * 100)/max_paticles
+# # write.table(x = percent, file = paste0(dirpath, 'survivePercent.txt'), col.names = F, row.names = F)
 # # 318 puntos -6,-15 S; 80 km (6 pixeles ROMS)
 # # 12 horas = 39.0356 %
 # # 06 horas = 39.1142 %
 # # FinCalcular Pocentaje de Sobrevivientes
-
+# 
 # sur_serie <- NULL
 # for(i in 1:final_age){
 #   VB_curve(day = i)
@@ -196,11 +197,8 @@ knob_map_byage_alive(df = df, outpath = outpathFigures, ages = 360, VB = VB40, z
 #   sur_serie <- c(sur_serie, sur_per)
 # }
 # 
-# 
-# 
-# 
 # VB_curve(day = final_age)
-# surv <- subset(df, df$age == i & df$knob >= VB40)
+# surv <- subset(df, df$age == final_age & df$knob >= VB40)
 # ind <- surv$drifter
 # 
 # PA_sur <- NULL
@@ -212,31 +210,34 @@ knob_map_byage_alive(df = df, outpath = outpathFigures, ages = 360, VB = VB40, z
 # }
 # 
 # png(filename = paste0(outpathFigures,'mortality.png'), width = 850, height = 850, res = 120)
-# plot(PA_sur, type = 'l', lty = 2, ylab = 'Mortality', xlab = 'Age', ylim = c(0,90))
+# plot(PA_sur, type = 'l', lty = 2, ylab = 'Mortality', xlab = 'Age', ylim = c(0,100))
 # lines(sur_serie, type = 'l', col = 'red')
 # legend('topright', legend = c('40%+Z', '40%'), bty = 'n', lty = c(2,1), col = c('black','red'))
 # dev.off()
+# 
+# 
+# # Plotear serie de tiempo por variable
+# varis <- c('exSST', 'exPY', 'exSZ', 'exMZ')
+# png(filename = paste0(outpathFigures, 'varitimeserie.png'), width = 1250, height = 950, res = 120)
+# par(mfrow = c(2,2), mar = c(3.5,5,1,1))
+# for(i in varis){
+#   parsi <- timeserie_vari(df = df, outpath = outpathFigures, VB = VB40, alive = T, vari = i)[1:final_age]
+#   parno <- timeserie_vari(df = df, outpath = outpathFigures, VB = VB40, alive = F, vari = i)[1:final_age]
+#   
+#   rangetemp <- range(c(parsi, parno))
+#   
+#   plot(1:final_age, type = 'n', ylab = '', ylim = rangetemp, xlab = '', axes = F)
+#   mtext(text = i, side = 2, line = 3, font = 2)
+#   mtext(text = 'Age', side = 1, line = 2.5, font = 2)
+#   axis(side = 1, font = 2)
+#   axis(side = 2, font = 2, las = 2)
+#   box()
+#   lines(parsi, lwd = 2, col = 'black')
+#   lines(parno, lwd = 2, col = 'red')
+#   legend('topleft', legend = c('alive', 'no-alive'), bty = 'n', lty = c(1,1),
+#          col = c('black', 'red'), lwd = c(2,2))
+# }
+# dev.off()
 
 
-# Plotear serie de tiempo por variable
-varis <- c('exSST', 'exPY', 'exSZ', 'exMZ')
-png(filename = paste0(outpathFigures, 'varitimeserie.png'), width = 1250, height = 950, res = 120)
-par(mfrow = c(2,2), mar = c(3.5,5,1,1))
-for(i in varis){
-  parsi <- timeserie_vari(df = df, outpath = outpathFigures, VB = VB40, alive = T, vari = i)[1:final_age]
-  parno <- timeserie_vari(df = df, outpath = outpathFigures, VB = VB40, alive = F, vari = i)[1:final_age]
-  
-  rangetemp <- range(c(parsi, parno))
-  
-  plot(1:final_age, type = 'n', ylab = '', ylim = rangetemp, xlab = '', axes = F)
-  mtext(text = i, side = 2, line = 3, font = 2)
-  mtext(text = 'Age', side = 1, line = 2.5, font = 2)
-  axis(side = 1, font = 2)
-  axis(side = 2, font = 2, las = 2)
-  box()
-  lines(parsi, lwd = 2, col = 'black')
-  lines(parno, lwd = 2, col = 'red')
-  legend('topleft', legend = c('alive', 'no-alive'), bty = 'n', lty = c(1,1),
-         col = c('black', 'red'), lwd = c(2,2))
-}
-dev.off()
+dens2D_map_byage(df = df, ages = c(1,360), outpath = outpathFigures)
