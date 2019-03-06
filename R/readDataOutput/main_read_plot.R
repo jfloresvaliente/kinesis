@@ -225,12 +225,11 @@ for(i in 1:final_age){
   PA_sur <- c(PA_sur, surv)
 }
 
-png(filename = paste0(outpathFigures,'mortality.png'), width = 850, height = 850, res = 120)
-plot(PA_sur, type = 'l', lty = 2, ylab = 'Mortality', xlab = 'Age', ylim = c(0,100))
-lines(sur_serie, type = 'l', col = 'red')
+png(filename = paste0(outpathFigures,'survival.png'), width = 850, height = 850, res = 120)
+plot(PA_sur, type = 'l', lty = 2, ylab = 'Survival', xlab = 'Age', ylim = c(0,100))
+lines(abs(sur_serie - 100), type = 'l', col = 'red')
 legend('topright', legend = c('40%+Z', '40%'), bty = 'n', lty = c(2,1), col = c('black','red'))
 dev.off()
-
 
 # Plotear serie de tiempo por variable
 varis <- c('exSST', 'exPY', 'exSZ', 'exMZ')
