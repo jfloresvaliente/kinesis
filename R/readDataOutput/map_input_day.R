@@ -83,36 +83,3 @@ for(i in 1:length(varfiles)){
 }
 
 
-
-
-
-
-
-
-
-# 
-# x11(); image.plot(x,y,z)
-
-
-
-# PNG <- paste0(outpath, 'densityMapDay', days[i],'.png')
-# map <- ggplot(data = envi, aes(x = x, y = y))
-# map <- map +
-#   # geom_point(data = sub_df, aes(x = lon, y = lat),colour ='black',size = .001)+
-# 
-#   scale_alpha(guide = F) +
-#   labs(x = 'Longitude (W)', y = 'Latitude (S)') +
-#   borders(fill='grey',colour='grey') +
-#   coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +
-#   theme(axis.text.x  = element_text(face='bold', color='black',
-#                                     size=15, angle=0),
-#         axis.text.y  = element_text(face='bold', color='black',
-#                                     size=15, angle=0),
-#         axis.title.x = element_text(face='bold', color='black',
-#                                     size=15, angle=0),
-#         axis.title.y = element_text(face='bold', color='black',
-#                                     size=15, angle=90),
-#         legend.text  = element_text(size=15),
-#         legend.title = element_text(size=15))
-# # if(!is.null(PNG)) ggsave(filename = PNG, width = 9, height = 9) else map
-# print(PNG); flush.console()

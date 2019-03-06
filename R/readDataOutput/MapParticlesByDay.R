@@ -6,11 +6,32 @@
 # Aim    : 
 # URL    : 
 #=============================================================================#
-MapParticlesByDay <- function(df, outpath, xlimmap = c(-100,-70), ylimmap = c(-30,0)){
-  library(maps)
-  library(mapdata)
+MapParticlesByDay <- function(
+  df
+  ,outpath
+  ,xlimmap = c(-100,-70)
+  ,ylimmap = c(-30,0)
+  ,zlimmap = c(0,15)
+  ,VB = VB40
+  ,alive = F
+  ){
+  #============ ============ Arguments ============ ============#
+  # df = data frame with data of output kinesis
+  # ages = ages to plot in the map
+  # xlimmap = X domain of map
+  # ylimmap = Y domain of map
+  # VB = length of Von Bertalanffy 
+  # alive = if TRUE, plot the alive particles
+  #============ ============ Arguments ============ ============#
   
-  # df <- subset(df, df$TGL == 1)
+  if(alive == T){
+    alive_index <- subset(df, df$age == 360 & df$knob >= VB)
+    df <- subset(df, df$drifter %in% alive_index$drifter)
+    outname <- 'dayAlive'
+  }else{
+    outname <- 'day'
+  }
+  
   var_fact <- as.numeric(levels(factor(df$day)))
   
   for(i in 1:length(var_fact)){
@@ -23,7 +44,7 @@ MapParticlesByDay <- function(df, outpath, xlimmap = c(-100,-70), ylimmap = c(-3
     if(i_name == 0){
       
       sub_df <- subset(df, df$day == i_name)
-      PNG <- paste0(outpath, 'day',number ,'.png')
+      PNG <- paste0(outpath, outname, number ,'.png')
       
       png(file = PNG, height = 650, width = 650)
       par(mar = c(1,2,1,2), oma = c(2,1,.5,.5))

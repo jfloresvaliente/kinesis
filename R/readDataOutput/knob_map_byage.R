@@ -6,12 +6,38 @@
 # Aim    : 
 # URL    : 
 #=============================================================================#
-knob_map_byage <- function(df, outpath, ages = c(1,360),xlimmap = c(-100,-70), ylimmap = c(-30,0), zlimmap = c(0,15)){
+knob_map_byage <- function(
+  df
+  ,outpath
+  ,ages = c(1,360)
+  ,xlimmap = c(-100,-70)
+  ,ylimmap = c(-30,0)
+  ,zlimmap = c(0,15)
+  ,VB = VB40
+  ,alive = F
+){
+  #============ ============ Arguments ============ ============#
+  # df = data frame with data of output kinesis
+  # ages = ages to plot in the map
+  # xlimmap = X domain of map
+  # ylimmap = Y domain of map
+  # zlimmap = Z domain for colour bar in map
+  # VB = length of Von Bertalanffy 
+  # alive = if TRUE, plot the alive particles
+  #============ ============ Arguments ============ ============#
+  
+  if(alive == T){
+    alive_index <- subset(df, df$age == 360 & df$knob >= VB)
+    df <- subset(df, df$drifter %in% alive_index$drifter)
+    outname <- 'knobMapAgeAlive'
+  }else{
+    outname <- 'knobMapAge'
+  }
   
   for(i in 1:length(ages)){
     sub_df <- subset(df, df$age == ages[i] & df$TGL == 1)
     
-    PNG <- paste0(outpath, 'knobMapAge', ages[i],'.png')
+    PNG <- paste0(outpath, outname, ages[i],'.png')
     map <- ggplot(data = sub_df, aes(x = lon, y = lat))
     map <- map +
       geom_point(data = sub_df, aes(x = lon, y = lat, colour = knob), size = 1)+

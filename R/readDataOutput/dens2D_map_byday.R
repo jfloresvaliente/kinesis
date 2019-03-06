@@ -1,24 +1,48 @@
 #=============================================================================#
-# Name   : knob_map_byage_alive
+# Name   : dens2D_map_byday
 # Author : Jorge Flores
 # Date   : 
 # Version:
 # Aim    : 
 # URL    : 
 #=============================================================================#
-knob_map_byage_alive <- function(df, outpath, ages = c(1,360),xlimmap = c(-100,-70), ylimmap = c(-30,0), zlimmap = c(0,15), VB = VB40){
+dens2D_map_byday <- function(
+  df
+  ,outpath
+  ,days = c(1,360)
+  ,xlimmap = c(-100,-70)
+  ,ylimmap = c(-30,0)
+  ,zlimmap = c(0,350)
+  ,VB = VB40
+  ,alive = F
+  ,bins = c(2000,2000)
+){
+  #============ ============ Arguments ============ ============#
+  # df = data frame with data of output kinesis
+  # days = days to plot in the map
+  # xlimmap = X domain of map
+  # ylimmap = Y domain of map
+  # zlimmap = Z domain for colour bar in map
+  # VB = length of Von Bertalanffy 
+  # alive = if TRUE, plot the alive particles
+  #============ ============ Arguments ============ ============#
   
-  alive_index <- subset(df, df$age == 360 & df$knob >= VB)
-  df <- subset(df, df$drifter %in% alive_index$drifter)
-
-  for(i in 1:length(ages)){
-    sub_df <- subset(df, df$age == ages[i] & df$TGL == 1)
+  if(alive == T){
+    alive_index <- subset(df, df$age == 360 & df$knob >= VB)
+    df <- subset(df, df$drifter %in% alive_index$drifter)
+    outname <- 'dens2DMapDayAlive'
+  }else{
+    outname <- 'dens2DMapDay'
+  }
+  
+  for(i in 1:length(days)){
+    sub_df <- subset(df, df$day == days[i] & df$TGL == 1)
     
-    PNG <- paste0(outpath, 'knobMapAgeAlive', ages[i],'.png')
+    PNG <- paste0(outpath, outname, days[i],'.png')
     map <- ggplot(data = sub_df, aes(x = lon, y = lat))
     map <- map +
-      geom_point(data = sub_df, aes(x = lon, y = lat, colour = knob), size = 1)+
-      scale_colour_gradientn(colours = tim.colors(64), limits = zlimmap, expression('Knob'))+
+      stat_bin_hex(bins = bins)+
+      scale_fill_gradientn(colours = tim.colors(64), limits = zlimmap, expression(Count))+
       labs(x = 'Longitude (W)', y = 'Latitude (S)') +
       borders(fill='grey',colour='grey') +
       coord_fixed(xlim = xlimmap, ylim = ylimmap, ratio = 2/2) +

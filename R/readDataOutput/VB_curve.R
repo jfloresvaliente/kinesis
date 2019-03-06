@@ -6,7 +6,7 @@
 # Aim    : 
 # URL    : 
 #=============================================================================#
-VB_curve <- function(df, Linf = 20.5, k = 0.86, t0 = -0.14, day = 360){
+VB_curve <- function(Linf = 20.5, k = 0.86, t0 = -0.14, day = 360){
   
   # Get VB limits
   # VB - (Marzloff et all 2009)
