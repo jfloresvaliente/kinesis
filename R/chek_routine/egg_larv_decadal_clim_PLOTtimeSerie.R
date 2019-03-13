@@ -14,7 +14,7 @@ dirpath <- dirpath <- 'F:/COLLABORATORS/KINESIS/egg_larvae/output/' # Ruta donde
 
 lat <- rev(seq(-20, 0, 1))
 
-vari_name <- 'egg'
+vari_name <- 'Anc_egg'
 csv_file <- paste0(dirpath, 'Climatology_', vari_name, '.csv')
 datos <- read.table(file = csv_file, sep = ';', header = T)
 datos$lon <- datos$lon -360
@@ -25,17 +25,21 @@ dir.create(paste0(dirpath, 'figures/'), showWarnings = F)
 monthRow <- NULL
 for (i in 1:12) {
   dat <- subset(datos, datos$mes == i)
-  
-  rowDat <- NULL
-  for (j in 1:(length(lat)-1)) {
-    # print(j)
-    sublat <- subset(dat, dat$lat <= lat[j] & dat$lat > lat[j+1])
-    if(dim(sublat)[1] == 0) vari <- NA else vari <- mean(sublat[,3])
-    
-    varirow <- c(mean(c(lat[j], lat[j+1])), vari)
-    rowDat <- rbind(rowDat, varirow)
+  if(dim(dat)[1] == 0){
+    monthRow <- cbind(monthRow, rep(NA, times = length(lat)-1))
+  }else{
+    rowDat <- NULL
+    for (j in 1:(length(lat)-1)) {
+      in_lat <- lat[j]
+      on_lat <- lat[j+1]
+      sublat <- subset(dat, dat$lat <= in_lat & dat$lat > on_lat)
+      # sublat <- subset(dat, dat$lat <= -12    & dat$lat > -13)
+      if(dim(sublat)[1] == 0) vari <- NA else vari <- mean(sublat[,3])
+      varirow <- c(mean(c(lat[j], lat[j+1])), vari)
+      rowDat <- rbind(rowDat, varirow)
+    }
+    monthRow <- cbind(monthRow, rowDat[,2])
   }
-  monthRow <- cbind(monthRow, rowDat[,2])
 }
 newlats <- rowDat[,1]
 
@@ -50,15 +54,15 @@ image.plot(months, latis, log(monthRow),
 mtext(text = 'Log values', side = 4)
 
 timeRow <- colMeans(x = (monthRow), na.rm = T)
-plot(1:12, timeRow, type = 'l', ylab = '# larvae')
+plot(1:12, timeRow, type = 'b', ylab = '# larvae')
 dev.off()
 
 # #-------------------------- Interanual ---------------------------#
-datos <- read.table(paste0(dirpath, 'interanual_', vari_name, '.csv'), header = T)
+datos <- read.table(paste0(dirpath, 'interanual_', vari_name, '.csv'), header = T, sep = ';')
 x <- as.Date(as.character(datos$fecha))
 y <- as.numeric(datos[,2])
 png(filename = paste0(dirpath, 'figures/', 'interanual_', vari_name, '.png'), width = 850, height = 850)
-plot(x, y, type = 'l', xlab = '', ylab = paste('Number of', vari_name))
+plot(x, y, type = 'b', xlab = '', ylab = paste('Number of', vari_name))
 dev.off()
 
 # ONI -----------------#

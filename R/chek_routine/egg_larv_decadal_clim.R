@@ -10,12 +10,12 @@ library(maps)
 library(mapdata)
 
 dirpath <- 'F:/COLLABORATORS/KINESIS/egg_larvae/' # Ruta donde estan almacenados los datos
-filename <- 'PRUEBA_JTM.csv' # Nombre del archivo que contiene los datos de huevos y larvas
+filename <- 'encabezado.csv' # Nombre del archivo que contiene los datos de huevos y larvas
 varis <- c('Anc_egg', 'Anc_lar', 'Sar_egg', 'Sar_lar')
 
 #--------------- NO CAMBIAR NADA DESDE AQUI --------------------#
 for(name_var in varis){
-  dat <- read.csv(paste0(dirpath, filename), sep = ',')
+  dat <- read.csv(paste0(dirpath, filename), sep = ';')
   col_index <- which(names(dat) == name_var)
   x <- dat$Long # Vector de longitudes
   y <- dat$Lat  # Vector de latitudes
@@ -32,9 +32,10 @@ for(name_var in varis){
   xmn=-100; xmx=-70; ymn=-40; ymx=15
   
   dir.create(paste0(dirpath, 'output/'), showWarnings = F)
-  dat <- cbind(dat[,1:2], x, y, z)
+  dat <- as.data.frame(cbind(dat$Year, dat$Month, x, y, z))
   dat$z[dat$z == 0] <- NA
   dat <- dat[complete.cases(dat), ] # Filtro para eliminar NA
+  colnames(dat) <- c('Year', 'Month', 'x', 'y','z')
   
   years <- seq(starting, ending, by = 10)
   
@@ -71,7 +72,6 @@ for(name_var in varis){
       
       xyz$decada <- rep(decada, times = dim(xyz)[1])
       DecadalMean <- rbind(DecadalMean, xyz)
-      
     }
   }
   colnames(DecadalMean) <- c('lon', 'lat', vari_dens, 'decada')
