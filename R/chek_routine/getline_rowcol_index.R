@@ -7,7 +7,7 @@
 # URL    : 
 #=============================================================================#
 getline_rowcol_index <- function(
-  nc_grid,
+  nc_file,
   lon1 = NULL,
   lat1 = NULL,
   lon2 = NULL,
@@ -17,7 +17,7 @@ getline_rowcol_index <- function(
   library(ncdf4)
   library(fields)
   
-  nc <- nc_open(nc_grid)
+  nc <- nc_open(nc_file)
   
   x <- ncvar_get(nc, 'lon_rho')
   y <- ncvar_get(nc, 'lat_rho')
@@ -26,6 +26,8 @@ getline_rowcol_index <- function(
   assign(x = 'lon' , value = x, envir = .GlobalEnv)
   assign(x = 'lat' , value = y, envir = .GlobalEnv)
   assign(x = 'mask', value = z, envir = .GlobalEnv)
+  
+  nc_close(nc)
   
   if(is.null(lon1) | is.null(lat1) | is.null(lon2) | is.null(lat2)){
     print('You need 2 latitudes and 2 longitudes, choose two points on the map:')
@@ -59,7 +61,7 @@ getline_rowcol_index <- function(
     
     lines(newX, newY)
   }
-  
+
   rowcol <- NULL
   for(i in 1:length(newX)){
     
@@ -70,8 +72,7 @@ getline_rowcol_index <- function(
     n <- which(xy1 == min(xy1), arr.ind = T)
     rowcol <- rbind(rowcol, n[1,])
   }
-  
-  
+
   rowcol <- rowcol[!duplicated(rowcol), ]
   colnames(rowcol) <- c('row_index', 'col_index')
   assign(x = 'LineIndex', value = rowcol, envir = .GlobalEnv)
@@ -83,7 +84,6 @@ getline_rowcol_index <- function(
   }
   x11()
   image.plot(x,y,z, xlab = 'Longitude', ylab = 'Latitude')
-  # lines(newX, newY)
 }
 #=============================================================================#
 # END OF PROGRAM
