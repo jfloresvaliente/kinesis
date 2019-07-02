@@ -3,7 +3,7 @@
 # Author : Jorge Flores
 # Date   : 
 # Version:
-# Aim    : 
+# Aim    : Obtain the indexes [row col] of a grid for later calculations
 # URL    : 
 #=============================================================================#
 getline_rowcol_index <- function(
@@ -13,6 +13,16 @@ getline_rowcol_index <- function(
   lon2 = NULL,
   lat2 = NULL)
   {
+  
+  #============ ============ Arguments ============ ============#
+  
+  # ncfile = ROMS file name
+  # lon1 = longitud del punto 1
+  # lat1 = latitud del punto 1
+  # lon2 = longitud del punto 2
+  # lat2 = latitud del punto 2
+
+  #============ ============ Arguments ============ ============#
   
   library(ncdf4)
   library(fields)
@@ -62,18 +72,26 @@ getline_rowcol_index <- function(
     lines(newX, newY)
   }
 
+  # Obtain the indices through the line formed between both points
   rowcol <- NULL
   for(i in 1:length(newX)){
-    
     x1 <- abs(x - newX[i])
     y1 <- abs(y - newY[i])
-    
     xy1 <- x1 + y1
     n <- which(xy1 == min(xy1), arr.ind = T)
     rowcol <- rbind(rowcol, n[1,])
   }
-
+  
+  # Remove duplicates
   rowcol <- rowcol[!duplicated(rowcol), ]
+  
+  # Eliminate points on the ground
+  cospoint <- NULL
+  for(i in 1:dim(rowcol)[1]){
+    if(z[rowcol[i,1], rowcol[i,2]] == 0) cospoint <- c(cospoint, i)
+  }
+  if(!is.null(cospoint)) rowcol <- rowcol[-c(cospoint),]
+
   colnames(rowcol) <- c('row_index', 'col_index')
   assign(x = 'LineIndex', value = rowcol, envir = .GlobalEnv)
   
