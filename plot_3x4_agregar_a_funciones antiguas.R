@@ -32,6 +32,7 @@ for(i in 1:12){
   if(i == 12)           par(mai = c(cx, 0, 0 , cx))
   
   image(lon,lat,mask,col = tim.colors(64), axes = F, zlim = zrange)
+  map('worldHires',add=T,fill=T,col='gray')
   mtext(text = paste('PLOT', i), side = 3, line = -4, adj = 0.5, font = 2)
   box(lwd=.5, col='black')
   # box("figure", lwd=.5, col='black')

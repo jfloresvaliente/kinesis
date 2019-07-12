@@ -23,3 +23,5 @@ get_Uclim
 get_Vclim
 get_Wclim
 get_TEMPclim
+
+dlmwrite([path 'zlevels.txt'],ZM')
