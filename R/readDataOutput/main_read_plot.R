@@ -6,7 +6,7 @@
 # Aim    : 
 # URL    : 
 #=============================================================================#
-dirpath <- '/home/jtam/Documents/kinesis_escenarios_outputs/escenario/outM2/'
+dirpath <- 'E:/kinesis_escenarios_outputs/escenario_t-4c2m2/outM8/'
 nfiles  <- length(list.files(path = dirpath, pattern = paste0('output','.*\\.txt'), full.names = T, recursive = T))
 max_paticles <- 9540
 stepToPlot   <- c(21,90,360)
@@ -155,53 +155,54 @@ dev.off()
 #=============================================================================#
 hist_knob_weight_byday(df = df, Day = stepFinal, VB = VB40)
 
-png(file = paste0(dirpath, 'figures/histKnobWeightByday.png'), width = 950, height = 550)
-par(lwd = 2, mfrow = c(1,2), mar = c(4.5,4.5,1,4.5))
-
-hist(hist_knob_byday  , freq = F, ylim = c(0,.6), axes = F, xlab = '', ylab = '', main = '')
-axis(side = 1, lwd = 2, lwd.ticks = 2, font.axis = 4, cex.axis = 1.5)
-axis(side = 2, lwd = 2, lwd.ticks = 2, font.axis = 4, cex.axis = 1.5, las = 2)
-mtext(side = 1, line = 3, font = 2, cex = 1.5, text = 'knob (cm)')
-mtext(side = 2, line = 3, font = 2, cex = 1.5, text = 'Relative Frequecy (%)')
-mtext(side = 3, line =-2, font = 2, cex = 1.5, text = paste('Day:', stepFinal), adj = 0.1)
-box(lwd = 2)
-
-hist(hist_weight_byday, freq = F, ylim = c(0,.6), axes = F, xlab = '', ylab = '', main = '')
-axis(side = 1, lwd = 2, lwd.ticks = 2, font.axis = 4, cex.axis = 1.5)
-axis(side = 2, lwd = 2, lwd.ticks = 2, font.axis = 4, cex.axis = 1.5, las = 2)
-mtext(side = 1, line = 3, font = 2, cex = 1.5, text = 'Wet Weight (g)')
-mtext(side = 2, line = 3, font = 2, cex = 1.5, text = 'Relative Frequecy (%)')
-mtext(side = 3, line =-2, font = 2, cex = 1.5, text = paste('Day:', stepFinal), adj = 0.1)
-box(lwd = 2)
-dev.off()
+if(length(hist_knob_byday) != 0 | length(hist_weight_byday) != 0){
+  png(file = paste0(dirpath, 'figures/histKnobWeightByday.png'), width = 950, height = 550)
+  par(lwd = 2, mfrow = c(1,2), mar = c(4.5,4.5,1,4.5))
+  
+  hist(hist_knob_byday  , freq = F, ylim = c(0,.6), axes = F, xlab = '', ylab = '', main = '')
+  axis(side = 1, lwd = 2, lwd.ticks = 2, font.axis = 4, cex.axis = 1.5)
+  axis(side = 2, lwd = 2, lwd.ticks = 2, font.axis = 4, cex.axis = 1.5, las = 2)
+  mtext(side = 1, line = 3, font = 2, cex = 1.5, text = 'knob (cm)')
+  mtext(side = 2, line = 3, font = 2, cex = 1.5, text = 'Relative Frequecy (%)')
+  mtext(side = 3, line =-2, font = 2, cex = 1.5, text = paste('Day:', stepFinal), adj = 0.1)
+  box(lwd = 2)
+  
+  hist(hist_weight_byday, freq = F, ylim = c(0,.6), axes = F, xlab = '', ylab = '', main = '')
+  axis(side = 1, lwd = 2, lwd.ticks = 2, font.axis = 4, cex.axis = 1.5)
+  axis(side = 2, lwd = 2, lwd.ticks = 2, font.axis = 4, cex.axis = 1.5, las = 2)
+  mtext(side = 1, line = 3, font = 2, cex = 1.5, text = 'Wet Weight (g)')
+  mtext(side = 2, line = 3, font = 2, cex = 1.5, text = 'Relative Frequecy (%)')
+  mtext(side = 3, line =-2, font = 2, cex = 1.5, text = paste('Day:', stepFinal), adj = 0.1)
+  box(lwd = 2)
+  dev.off()
+}
 
 #=============================================================================#
 # Hist Mean Growth (alive_byage) with Wweight
 #=============================================================================#
 hist_knob_weight_byage(df = df, Age = stepFinal, VB = VB40)
 
-png(file = paste0(dirpath, 'figures/histKnobWeightByage.png'), width = 950, height = 550)
-par(lwd = 2, mfrow = c(1,2), mar = c(4.5,4.5,1,4.5))
-
-hist(hist_knob_byage  , freq = F, ylim = c(0,.6), axes = F, xlab = '', ylab = '', main = '')
-axis(side = 1, lwd = 2, lwd.ticks = 2, font.axis = 4, cex.axis = 1.5)
-axis(side = 2, lwd = 2, lwd.ticks = 2, font.axis = 4, cex.axis = 1.5, las = 2)
-mtext(side = 1, line = 3, font = 2, cex = 1.5, text = 'knob (cm)')
-mtext(side = 2, line = 3, font = 2, cex = 1.5, text = 'Relative Frequecy (%)')
-mtext(side = 3, line =-2, font = 2, cex = 1.5, text = paste('Age:', stepFinal, 'days'), adj = 0.1)
-box(lwd = 2)
-
-hist(hist_weight_byage, freq = F, ylim = c(0,.6), axes = F, xlab = '', ylab = '', main = '')
-axis(side = 1, lwd = 2, lwd.ticks = 2, font.axis = 4, cex.axis = 1.5)
-axis(side = 2, lwd = 2, lwd.ticks = 2, font.axis = 4, cex.axis = 1.5, las = 2)
-mtext(side = 1, line = 3, font = 2, cex = 1.5, text = 'Wet Weight (g)')
-mtext(side = 2, line = 3, font = 2, cex = 1.5, text = 'Relative Frequecy (%)')
-mtext(side = 3, line =-2, font = 2, cex = 1.5, text = paste('Age:', stepFinal, 'days'), adj = 0.1)
-box(lwd = 2)
-dev.off()
-#=============================================================================#
-# END OF PROGRAM
-#=============================================================================#
+if(length(hist_knob_byage) != 0 | length(hist_weight_byage) != 0){
+  png(file = paste0(dirpath, 'figures/histKnobWeightByage.png'), width = 950, height = 550)
+  par(lwd = 2, mfrow = c(1,2), mar = c(4.5,4.5,1,4.5))
+  
+  hist(hist_knob_byage  , freq = F, ylim = c(0,.6), axes = F, xlab = '', ylab = '', main = '')
+  axis(side = 1, lwd = 2, lwd.ticks = 2, font.axis = 4, cex.axis = 1.5)
+  axis(side = 2, lwd = 2, lwd.ticks = 2, font.axis = 4, cex.axis = 1.5, las = 2)
+  mtext(side = 1, line = 3, font = 2, cex = 1.5, text = 'knob (cm)')
+  mtext(side = 2, line = 3, font = 2, cex = 1.5, text = 'Relative Frequecy (%)')
+  mtext(side = 3, line =-2, font = 2, cex = 1.5, text = paste('Age:', stepFinal, 'days'), adj = 0.1)
+  box(lwd = 2)
+  
+  hist(hist_weight_byage, freq = F, ylim = c(0,.6), axes = F, xlab = '', ylab = '', main = '')
+  axis(side = 1, lwd = 2, lwd.ticks = 2, font.axis = 4, cex.axis = 1.5)
+  axis(side = 2, lwd = 2, lwd.ticks = 2, font.axis = 4, cex.axis = 1.5, las = 2)
+  mtext(side = 1, line = 3, font = 2, cex = 1.5, text = 'Wet Weight (g)')
+  mtext(side = 2, line = 3, font = 2, cex = 1.5, text = 'Relative Frequecy (%)')
+  mtext(side = 3, line =-2, font = 2, cex = 1.5, text = paste('Age:', stepFinal, 'days'), adj = 0.1)
+  box(lwd = 2)
+  dev.off()
+}
 
 sur_serie <- NULL
 for(i in 1:stepFinal){
@@ -212,7 +213,7 @@ for(i in 1:stepFinal){
   sur_per <- (surv*100)/max_paticles
   sur_serie <- c(sur_serie, sur_per)
 }
- 
+
 VB_curve(day = stepFinal)
 surv <- subset(df, df$age == stepFinal & df$knob >= VB40)
 ind <- surv$drifter
@@ -233,24 +234,29 @@ dev.off()
 
 
 # Plotear serie de tiempo por variable
-varis <- c('exSST', 'exPY', 'exSZ', 'exMZ')
-png(filename = paste0(outpathFigures, 'varitimeserie.png'), width = 1250, height = 950, res = 120)
-par(mfrow = c(2,2), mar = c(3.5,5,1,1))
-for(i in varis){
-  parsi <- timeserie_vari(df = df, outpath = outpathFigures, VB = VB40, alive = T, vari = i)[1:stepFinal]
-  parno <- timeserie_vari(df = df, outpath = outpathFigures, VB = VB40, alive = F, vari = i)[1:stepFinal]
-
-  rangetemp <- range(c(parsi, parno))
-
-  plot(1:stepFinal, type = 'n', ylab = '', ylim = rangetemp, xlab = '', axes = F)
-  mtext(text = i, side = 2, line = 3, font = 2)
-  mtext(text = 'Age', side = 1, line = 2.5, font = 2)
-  axis(side = 1, font = 2)
-  axis(side = 2, font = 2, las = 2)
-  box()
-  lines(parsi, lwd = 2, col = 'black')
-  lines(parno, lwd = 2, col = 'red')
-  legend('topleft', legend = c('alive', 'no-alive'), bty = 'n', lty = c(1,1),
-         col = c('black', 'red'), lwd = c(2,2))
+if(length(hist_knob_byday) != 0 | length(hist_weight_byday) != 0){
+  varis <- c('exSST', 'exPY', 'exSZ', 'exMZ')
+  png(filename = paste0(outpathFigures, 'varitimeserie.png'), width = 1250, height = 950, res = 120)
+  par(mfrow = c(2,2), mar = c(3.5,5,1,1))
+  for(i in varis){
+    parsi <- timeserie_vari(df = df, outpath = outpathFigures, VB = VB40, alive = T, vari = i)[1:stepFinal]
+    parno <- timeserie_vari(df = df, outpath = outpathFigures, VB = VB40, alive = F, vari = i)[1:stepFinal]
+    
+    rangetemp <- range(c(parsi, parno))
+    
+    plot(1:stepFinal, type = 'n', ylab = '', ylim = rangetemp, xlab = '', axes = F)
+    mtext(text = i, side = 2, line = 3, font = 2)
+    mtext(text = 'Age', side = 1, line = 2.5, font = 2)
+    axis(side = 1, font = 2)
+    axis(side = 2, font = 2, las = 2)
+    box()
+    lines(parsi, lwd = 2, col = 'black')
+    lines(parno, lwd = 2, col = 'red')
+    legend('topleft', legend = c('alive', 'no-alive'), bty = 'n', lty = c(1,1),
+           col = c('black', 'red'), lwd = c(2,2))
+  }
+  dev.off()
 }
-dev.off()
+#=============================================================================#
+# END OF PROGRAM
+#=============================================================================#
