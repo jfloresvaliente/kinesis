@@ -10,11 +10,11 @@ library(fields)
 library(maps)
 library(mapdata)
 
-kmdist <- 6 # Distancia en pixeles desde la costa
+kmdist <- 4 # Distancia en pixeles desde la costa
 lat_1 <- -6 # Latmax
 lat_2 <- -15 # Latmin
 
-dirpath  <- 'F:/GitHub/kinesis/data/'
+dirpath  <- 'D:/ROMS_SIMULATIONS/peru10km/'
 fileMask <- paste0(dirpath, 'mask_grid.csv')
 fileLon  <- paste0(dirpath, 'lon_grid.csv')
 fileLat  <- paste0(dirpath, 'lat_grid.csv')

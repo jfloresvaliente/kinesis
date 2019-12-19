@@ -32,7 +32,7 @@ k <- SP@polygons[[1]]@Polygons[[1]]@coords
 # lines(k)
 # dev.off()
 
-#-------- Conteo de Particulas dentro de Zona de REsidencia -----------#
+#-------- Conteo de Particulas dentro de Zona de Residencia -----------#
 dirpath <- 'G:/hacer_hoy/anchovy/SensitivityTests12/1995simu1/'
 files <- list.files(path = dirpath, pattern = 'output', full.names = T, recursive = T)
 
