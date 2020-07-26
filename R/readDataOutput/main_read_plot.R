@@ -6,7 +6,7 @@
 # Aim    : 
 # URL    : 
 #=============================================================================#
-dirpath <- 'E:/kinesis_escenarios_outputs/escenario_t4c0.5m0.5/outM2/'
+dirpath <- 'D:/DOCS_JORGE/TAKESHI/kinesis/escenario_t4_m2/outM2/'
 nfiles  <- length(list.files(path = dirpath, pattern = paste0('output','.*\\.txt'), full.names = T, recursive = T))
 max_paticles <- 9540
 stepToPlot   <- c(360)
