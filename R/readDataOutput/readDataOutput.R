@@ -8,9 +8,9 @@
 #=============================================================================#
 readDataOutput <- function(dirpath, max_paticles = 5880, nfiles = 360){
   
-  #dirpath <- Directorio donde estan almacenados los outputs de kinesis
-  #max_paticles <- Numero maximo de particulas liberadas en la simulacion
-  #nfiles <- Numero de archivos para leer
+  # dirpath      = Directorio donde estan almacenados los outputs de kinesis
+  # max_paticles = Numero maximo de particulas liberadas en la simulacion
+  # nfiles       = Numero de archivos para leer
   
   df <- array(dim = c(max_paticles * nfiles, 13))
   df <- as.data.frame(df)
