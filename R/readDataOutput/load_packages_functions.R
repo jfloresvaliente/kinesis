@@ -13,13 +13,12 @@ source('R/readDataOutput/readDataOutput.R')
 source('R/readDataOutput/VB_curve.R')
 
 #=== Funciones en base DAY ===#
-source('R/readDataOutput/dens2D_map_byday.R')
-source('R/readDataOutput/knob_map_byday.R')
-source('R/readDataOutput/weight_map_byday.R')
-source('R/readDataOutput/MapParticlesByDay.R')
-source('R/readDataOutput/knob_weight_byday.R')
+# source('R/readDataOutput/dens2D_map_byday.R')
+# source('R/readDataOutput/knob_map_byday.R')
+# source('R/readDataOutput/weight_map_byday.R')
+# source('R/readDataOutput/MapParticlesByDay.R')
 
-source('R/readDataOutput/hist_knob_weight_byday.R')
+# source('R/readDataOutput/hist_knob_weight_byday.R')
 
 #=== Funciones en base AGE ===#
 source('R/readDataOutput/dens2D_map_byage.R')

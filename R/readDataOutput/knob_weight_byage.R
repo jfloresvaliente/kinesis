@@ -6,36 +6,45 @@
 # Aim    : 
 # URL    : 
 #=============================================================================#
-knob_weight_byage <- function(
-  df
-  ,age = 360
-  ,VB = VB40
-  ,alive = F
-  ){
+knob_weight_byday <- function(
+  df    = df
+  # ,age   = 360
+  # ,VB    = VB40
+  ,alive = T
+){
   #============ ============ Arguments ============ ============#
-  # df = data frame with data of output kinesis
-  # age = age to plot in the map
-  # VB = length of Von Bertalanffy 
+  # df    = data frame with data of output kinesis
+  # day   = day to plot in the map
+  # VB    = length of Von Bertalanffy 
   # alive = if TRUE, plot the alive particles
   #============ ============ Arguments ============ ============#
   
-  DF <- subset(df, df$TGL == 1)
-  
   if(alive == T){
-    alive_index <- subset(DF, DF$age == age & DF$knob >= VB)$drifter
-    DF <- subset(DF, DF$drifter %in% alive_index)
-    outname1 <- 'mean_knob_byage_alive'
-    outname2 <- 'mean_weight_byage_alive'
+    index <- subset(df, df$age == stepFinal & df$knob >= VB40 & df$TGL == 1)$drifter
+    DF    <- subset(df, df$drifter %in% index & df$age %in% 0:stepFinal)
+    outname1 <- 'knob_byage_alive'
+    outname2 <- 'weight_byage_alive'
   }else{
-    outname1 <- 'mean_knob_byage'
-    outname2 <- 'mean_weight_byage'
+    index <- subset(df, df$age == stepFinal & df$knob < VB40)$drifter
+    DF    <- subset(df, df$drifter %in% index & df$age %in% 0:stepFinal)
+    outname1 <- 'knob_byage_nonalive'
+    outname2 <- 'weight_byage_nonalive'
   }
-
+  
   mean_knob   <- tapply(DF$knob   , list(DF$age), mean, na.rm = T)
   mean_weight <- tapply(DF$Wweight, list(DF$age), mean, na.rm = T)
   
-  assign(x = outname1, value = mean_knob  , envir = .GlobalEnv)
-  assign(x = outname2, value = mean_weight, envir = .GlobalEnv)
+  sd_knob   <- tapply(DF$knob   , list(DF$age), sd, na.rm = T)
+  sd_weight <- tapply(DF$Wweight, list(DF$age), sd, na.rm = T)
+  
+  knob   <- list(mean_knob, sd_knob)
+  names(knob) <- c('mean', 'sd')
+  
+  weight <- list(mean_weight, sd_weight)
+  names(weight) <- c('mean', 'sd')
+  
+  assign(x = outname1, value = knob  , envir = .GlobalEnv)
+  assign(x = outname2, value = weight, envir = .GlobalEnv)
 }
 #=============================================================================#
 # END OF PROGRAM
